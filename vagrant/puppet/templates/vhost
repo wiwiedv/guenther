@@ -2,7 +2,11 @@
 	ServerAdmin webmaster@guenther.dev
 
 	DocumentRoot /srv/www/vhosts/guenther.dev
-
+  
+  <Directory /srv/www/vhosts/guenther.dev>
+    FallbackResource /index.php
+  </Directory>
+  
 	ErrorLog /var/log/apache2/error.log
 	CustomLog /var/log/apache2/access.log combined
 </VirtualHost>
