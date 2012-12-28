@@ -1,10 +1,16 @@
 <VirtualHost *:80>
 	ServerAdmin webmaster@guenther.dev
 
-	DocumentRoot /srv/www/vhosts/guenther.dev
+	DocumentRoot /srv/www/vhosts/guenther.dev/web
   
-  <Directory /srv/www/vhosts/guenther.dev>
-    FallbackResource /index.php
+  <Directory /srv/www/vhosts/guenther.dev/web>
+    
+    <IfModule mod_rewrite.c>
+      RewriteEngine on
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteCond %{REQUEST_FILENAME} !-d
+      RewriteRule ^ index.php [L]
+    </IfModule>
   </Directory>
   
 	ErrorLog /var/log/apache2/error.log

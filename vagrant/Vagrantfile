@@ -2,7 +2,7 @@ Vagrant::Config.run do |config|
   config.vm.define :guenther do |config|
     # 
     config.vm.network :hostonly, "10.100.1.5"
-    config.vm.share_folder "guenther", "/srv/www/vhosts/guenther.dev", "../web/", :nfs => true
+    config.vm.share_folder "guenther", "/srv/www/vhosts/guenther.dev", "../", :nfs => true
     # 
     config.vm.box = "lucid32.box"
     config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
