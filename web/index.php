@@ -4,9 +4,8 @@ require_once __DIR__.'/../vendor/autoload.php';
 $app = new Silex\Application();
 $app['debug'] = true;
 
-// definitions
-$app->get("/x", function(){
-	return "Hallo";
+$app->get("/", function() {
+	return "Guenther. Welcome.";
 });
 
 $app->run();
