@@ -1,8 +1,12 @@
 class apache 
 {      
+    $packages = [
+        "apache2",
+        "libapache2-mod-php5"
+    ]
     package 
     { 
-        "apache2":
+        $packages:
             ensure  => present,
             require => Exec['apt-get update']
     }

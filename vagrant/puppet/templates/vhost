@@ -4,13 +4,7 @@
 	DocumentRoot /srv/www/vhosts/guenther.dev/web
   
   <Directory /srv/www/vhosts/guenther.dev/web>
-    
-    <IfModule mod_rewrite.c>
-      RewriteEngine on
-      RewriteCond %{REQUEST_FILENAME} !-f
-      RewriteCond %{REQUEST_FILENAME} !-d
-      RewriteRule ^ index.php [L]
-    </IfModule>
+    FallbackResource index.php
   </Directory>
   
 	ErrorLog /var/log/apache2/error.log
