@@ -8,4 +8,7 @@ bin
 composer.phar
 
 vagrant/.vagrant
+vagrant/Settings
 .DS_Store
+
+.idea

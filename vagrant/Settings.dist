@@ -1,0 +1,7 @@
+# whether to use nfs instead of virtualbox shared folders
+# on windows, set to false
+$nfs = true
+
+# your vm will be accessible via this ip
+# adjust according to your virtualbox nic
+$ip = "10.100.1.5"

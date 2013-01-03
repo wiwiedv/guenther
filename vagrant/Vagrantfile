@@ -1,15 +1,16 @@
+load File.expand_path("../Settings", __FILE__)
+
 Vagrant::Config.run do |config|
   config.vm.define :guenther do |config|
     # 
-    config.vm.network :hostonly, "10.100.1.5"
-    config.vm.share_folder "guenther", "/srv/www/vhosts/guenther.dev", "../", :nfs => true
+    config.vm.network :hostonly, $ip
+    config.vm.share_folder "guenther", "/srv/www/vhosts/guenther.dev", "../", :nfs => $nfs
     # 
     config.vm.box = "precise32.box"
     config.vm.box_url = "http://files.vagrantup.com/precise32.box"
     config.vm.customize ["modifyvm", :id, "--rtcuseutc", "on"]
     config.vm.customize ["modifyvm", :id, "--memory", "512"]
     config.ssh.max_tries = 10
-    config.vm.forward_port 80, 8080
     config.vm.host_name = "guenther"
 
     config.vm.provision :puppet do |puppet|
