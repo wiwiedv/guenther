@@ -1,14 +1,13 @@
 web/bundles/
-app/bootstrap.php.cache
-app/cache/*
-app/logs/*
-build/
 vendor
 bin
 composer.phar
 
 vagrant/.vagrant
 vagrant/Settings
+
+db/*.sqlite3
+
 .DS_Store
 
 .idea

@@ -5,8 +5,10 @@
 - install [vagrant](http://www.vagrantup.com/)
 - install [composer](http://getcomposer.org/)
 
-#### running guenther
+#### setting up guenther
 - clone repository
 - run `composer install`
 - copy `vagrant/Settings.dist` to `vagrant/Settings` and modify according to needs
+
+#### running guenther
 - run `vagrant up --provision`
