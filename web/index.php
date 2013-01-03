@@ -13,7 +13,9 @@ $dbsOptions = array();
 
 // Instantiate ControllerProviders
 // insert new providers here.
-$controllerProviders = array();
+$controllerProviders = array(
+    new \wiwiedv\Linuxservices\LinuxservicesControllerProvider()
+);
 
 // Mount ControllerProviders and collect Doctrine-configs
 foreach ($controllerProviders as $provider) {
@@ -42,6 +44,11 @@ $app->before(function (Request $request) {
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
     }
+});
+
+// Set default controller
+$app->get("/", function() use($app) {
+    return $app->redirect("/linuxservices");
 });
 
 $app->run();
