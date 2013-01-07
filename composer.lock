@@ -1,5 +1,5 @@
 {
-    "hash": "801e77ce6d71e40635625ad7c7e78700",
+    "hash": "06feaa3cf87070c0b04e5b81e78247d4",
     "packages": [
         {
             "name": "doctrine/common",
@@ -231,12 +231,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Silex.git",
-                "reference": "e18192f7d337e409abaf52437f11c1906a9d6d6e"
+                "reference": "7df600f14887b0342f2d4a90debd6c8e6b44ef7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Silex/archive/e18192f7d337e409abaf52437f11c1906a9d6d6e.zip",
-                "reference": "e18192f7d337e409abaf52437f11c1906a9d6d6e",
+                "url": "https://github.com/fabpot/Silex/archive/7df600f14887b0342f2d4a90debd6c8e6b44ef7b.zip",
+                "reference": "7df600f14887b0342f2d4a90debd6c8e6b44ef7b",
                 "shasum": ""
             },
             "require": {
@@ -271,7 +271,7 @@
                 "symfony/css-selector": ">=2.1,<2.3-dev",
                 "symfony/dom-crawler": ">=2.1,<2.3-dev"
             },
-            "time": "1357203201",
+            "time": "1357318470",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -509,6 +509,66 @@
                 }
             ],
             "description": "Symfony Routing Component",
+            "homepage": "http://symfony.com"
+        },
+        {
+            "name": "symfony/security",
+            "version": "v2.1.6",
+            "target-dir": "Symfony/Component/Security",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Security",
+                "reference": "v2.1.6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/symfony/Security/archive/v2.1.6.zip",
+                "reference": "v2.1.6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/event-dispatcher": "2.1.*",
+                "symfony/http-foundation": "2.1.*",
+                "symfony/http-kernel": "2.1.*"
+            },
+            "require-dev": {
+                "symfony/form": "2.1.*",
+                "symfony/routing": "2.1.*",
+                "symfony/validator": "2.1.*",
+                "doctrine/common": ">=2.2,<2.4-dev",
+                "doctrine/dbal": ">=2.2,<2.4-dev"
+            },
+            "suggest": {
+                "symfony/class-loader": "2.1.*",
+                "symfony/finder": "2.1.*",
+                "symfony/form": "2.1.*",
+                "symfony/validator": "2.1.*",
+                "symfony/routing": "2.1.*",
+                "doctrine/dbal": "to use the built-in ACL implementation"
+            },
+            "time": "2012-12-11 10:40:22",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Security": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Security Component",
             "homepage": "http://symfony.com"
         },
         {
