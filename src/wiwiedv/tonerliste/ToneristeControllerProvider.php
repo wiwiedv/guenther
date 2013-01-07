@@ -36,6 +36,10 @@ class ToneristeControllerProvider implements GuentherControllerProviderInterface
             return $app['tonerliste']->insertToner();
         });
 
+        $controllers->post("/{tonerId}", function($tonerId) use($app) {
+            return $app['tonerliste']->insertToner($tonerId);
+        })->bind("specific_toner");
+
         $controllers->get("/{tonerId}", function($tonerId) use($app) {
             return $app['tonerliste']->showToner($tonerId);
         });
