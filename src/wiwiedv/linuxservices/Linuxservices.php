@@ -13,7 +13,7 @@ class Linuxservices
 
     public function __construct($app) {
         $this->app = $app;
-        $this->db = $this->app['dbs']['tonerliste'];
+        $this->db = $this->app['dbs']['linuxservices'];
     }
 
     public function index() {
