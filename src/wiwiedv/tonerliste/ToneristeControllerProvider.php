@@ -28,24 +28,24 @@ class ToneristeControllerProvider implements GuentherControllerProviderInterface
             return new Tonerliste($app);
         };
 
-        $controllers->get("/", function(Request $request) use($app) {
-            return $app['tonerliste']->listAllToners($request);
+        $controllers->get("/", function() use($app) {
+            return $app['tonerliste']->listAllToners();
         });
 
-        $controllers->post("/", function(Request $request) use($app) {
-            return $app['tonerliste']->insertToner($request);
+        $controllers->post("/", function() use($app) {
+            return $app['tonerliste']->insertToner();
         });
 
-        $controllers->get("/{tonerId}", function(Request $request, $tonerId) use($app) {
-            return $app['tonerliste']->showToner(null, $tonerId);
+        $controllers->get("/{tonerId}", function($tonerId) use($app) {
+            return $app['tonerliste']->showToner($tonerId);
         });
 
-        $controllers->put("/{tonerId}", function(Request $request, $tonerId) use($app) {
-            return $app['tonerliste']->updateToner($request, $tonerId);
+        $controllers->put("/{tonerId}", function($tonerId) use($app) {
+            return $app['tonerliste']->updateToner($tonerId);
         });
 
-        $controllers->delete("/{tonerId}", function(Request $request, $tonerId) use($app) {
-            return $app['tonerliste']->listAllToners(null, $tonerId);
+        $controllers->delete("/{tonerId}", function($tonerId) use($app) {
+            return $app['tonerliste']->listAllToners($tonerId);
         });
 
         return $controllers;

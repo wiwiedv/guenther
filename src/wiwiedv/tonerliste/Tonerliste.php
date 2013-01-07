@@ -30,7 +30,13 @@ class Tonerliste
 
     public function showToner($id = null) {
         // GET /{tonerId}
-        return new GuentherResponse("Not implemented.", 501);
+        if ($toner = $this->db->fetchAssoc("SELECT * FROM toner WHERE id = ?", array($id))) {
+            $toner['transactions'] = $this->db->fetchAll("SELECT * FROM transactions WHERE toner = ?",
+                                                         array($toner['id']));
+        } else {
+            $toner = array();
+        }
+        return new GuentherResponse($toner);
     }
 
     public function updateToner($id = null) {
