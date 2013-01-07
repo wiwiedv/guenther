@@ -48,6 +48,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => $twigOptions,
 ));
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => $firewallOptions
+));
+$app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 
 // Register middleware to handle json data in requests
 $app->before(function (Request $request) {
