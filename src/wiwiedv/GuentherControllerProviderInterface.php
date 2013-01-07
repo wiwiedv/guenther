@@ -8,4 +8,5 @@ use Silex\Application;
 interface GuentherControllerProviderInterface extends ControllerProviderInterface
 {
     public function getName();
+    public function getTwigConfiguration();
 }
