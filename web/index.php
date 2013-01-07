@@ -17,7 +17,8 @@ $twigOptions = array();
 // Instantiate ControllerProviders
 // insert new providers here.
 $controllerProviders = array(
-    new \wiwiedv\Linuxservices\LinuxservicesControllerProvider()
+    new \wiwiedv\Linuxservices\LinuxservicesControllerProvider(),
+    new \wiwiedv\Tonerliste\ToneristeControllerProvider()
 );
 
 // Mount ControllerProviders
