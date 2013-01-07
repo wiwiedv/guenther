@@ -6,10 +6,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 use wiwiedv\DoctrineConfigurationProviderInterface;
 use wiwiedv\GuentherControllerProviderInterface;
+use wiwiedv\SecurityConfigurationProviderInterface;
 
 $app = new Silex\Application();
 $app['debug'] = true;
 $dbsOptions = array();
+$firewallOptions = array();
+$twigOptions = array();
 
 // Instantiate ControllerProviders
 // insert new providers here.
@@ -17,15 +20,22 @@ $controllerProviders = array(
     new \wiwiedv\Linuxservices\LinuxservicesControllerProvider()
 );
 
-// Mount ControllerProviders and collect Doctrine-configs
+// Mount ControllerProviders
+// also, collect configs according to implemented interfaces
 foreach ($controllerProviders as $provider) {
+    // doctrine configs?
     if ($provider instanceof DoctrineConfigurationProviderInterface) {
-        $connectionConfigurations = $provider->getConnectionConfiguration();
-        foreach ($connectionConfigurations as $ccName => $ccData) {
-            $dbsOptions[$ccName] = $ccData;
-        }
+        $dbsOptions = array_merge($dbsOptions, $provider->getDBConfiguration());
     }
+
+    // security configs? - not yet implemented.
+    if ($provider instanceof SecurityConfigurationProviderInterface) {
+        $firewallOptions = array_merge($firewallOptions, $provider->getSecurityConfiguration());
+    }
+
+    // twig paths and controllers
     if ($provider instanceof GuentherControllerProviderInterface) {
+        $twigOptions = array_merge($twigOptions, $provider->getTwigConfiguration());
         $app->mount("/" . strtolower($provider->getName()), $provider);
     }
 }
@@ -35,10 +45,10 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'dbs.options' => $dbsOptions
 ));
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => __DIR__.'/templates',
+    'twig.path' => $twigOptions,
 ));
 
-// Register Middleware to handle json data in requests
+// Register middleware to handle json data in requests
 $app->before(function (Request $request) {
     if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
         $data = json_decode($request->getContent(), true);
