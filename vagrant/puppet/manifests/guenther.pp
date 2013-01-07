@@ -14,5 +14,3 @@ include bootstrap
 include other
 include apache
 include php
-include mysql
-include phpmyadmin

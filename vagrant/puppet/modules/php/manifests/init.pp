@@ -3,7 +3,7 @@ class php
     $packages = [
         "php5", 
         "php5-cli", 
-        "php5-mysql", 
+        "php5-sqlite", 
         "php-pear", 
         "php5-dev", 
         "php-apc", 
