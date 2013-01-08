@@ -12,7 +12,7 @@ use wiwiedv\DoctrineConfigurationProviderInterface;
 
 use wiwiedv\Tonerliste\Tonerliste;
 
-class ToneristeControllerProvider implements GuentherControllerProviderInterface, DoctrineConfigurationProviderInterface
+class TonerlisteControllerProvider implements GuentherControllerProviderInterface, DoctrineConfigurationProviderInterface
 {
     const NAME = "Tonerliste";
 
