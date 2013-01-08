@@ -39,7 +39,8 @@ class Tonerliste
         }
 
         // store new model to db with initial stock 0
-        if (1 !== $this->db->insert("toner", array("model" => $model, "stock" => 0))) {
+        $res = $this->db->insert("toner", array("model" => $model, "stock" => 0));
+        if (false === $res) {
             return new GuentherResponse("Could not store data", 500);
         }
 
@@ -61,12 +62,41 @@ class Tonerliste
 
         // toner model exists, increment stock.
         $toner['stock'] += 1;
-        $this->db->update("toner",
-            array("stock" => $toner['stock']),
-            array("id" => $toner['id']));
-        $this->saveTransactionForToner($toner['id'], 1, $reason);
+        $res = $this->db->update("toner",
+                                 array("stock" => $toner['stock']),
+                                 array("id" => $toner['id']));
+        $res = $res && $this->saveTransactionForToner($toner['id'], 1, $reason);
+
+        if (false === $res) {
+            return new GuentherResponse("Could not store data", 500);
+        }
 
         return new GuentherResponse($toner, 201, array("Location" => $this->getUrlForToner($id)));
+    }
+
+    public function updateToner($id, $model, $hidden) {
+        // PUT /{tonerId}
+        if (!($toner = $this->getTonerById($id))) {
+            return new GuentherResponse("Not found", 404);
+        }
+
+        if (!empty($model)) {
+            $toner['model'] = $model;
+        }
+
+        if (!is_null($hidden)) {
+            $toner['hidden'] = (!!$hidden ? 1 : 0);
+        }
+
+        $res = $this->db->update("toner",
+                          array("model" => $toner['model'], "hidden" => intval($toner['hidden'])),
+                          array("id" => $toner['id']));
+
+        if (false === $res) {
+            return new GuentherResponse("Could not store data", 500);
+        }
+
+        return new GuentherResponse($toner);
     }
 
     public function withdrawToner($id, $reason) {
@@ -84,10 +114,14 @@ class Tonerliste
         }
 
         $toner['stock'] -= 1;
-        $this->db->update("toner",
-            array("stock" => $toner['stock']),
-            array("id" => $toner['id']));
-        $this->saveTransactionForToner($toner['id'], 2, $reason);
+        $res = $this->db->update("toner",
+                                 array("stock" => $toner['stock']),
+                                 array("id" => $toner['id']));
+        $res = $res && $this->saveTransactionForToner($toner['id'], 2, $reason);
+
+        if (false === $res) {
+            return new GuentherResponse("Could not store data", 500);
+        }
 
         return new GuentherResponse($toner, 200);
     }

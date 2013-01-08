@@ -6,6 +6,9 @@
 * `1` Toner deposited
 * `2` Toner withdrawn
 
+#### Data Structures
+* Toner
+  *
 
 ### Resources
 
@@ -59,9 +62,25 @@
   * `201` Updated toner object
   * `400` _String literal_ "Missing parameter 'reason'"
   * `404` _String literal_ "Not found"
+  * `500` _String literal_ "Could not store data"
 * Response headers
   * `X-Guenther-Version` Guenther version number
   * `Location` The URL of the newly created resource, if response code was 201
+
+
+#### `PUT /{tonerId}`
+
+>Update information for the specified model
+
+* Request parameters
+  * `body` __model__ A new model name, _optional_
+  * `body` __hidden__ A truthy value to flag the model as hidden, _optional_
+* Possible responses
+  * `200` Updated toner object
+  * `404` _String literal_ "Not found"
+  * `500` _String literal_ "Could not store data"
+* Response headers
+  * `X-Guenther-Version` Guenther version number
 
 
 #### `DELETE /{tonerId}`
