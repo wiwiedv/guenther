@@ -33,23 +33,22 @@ class ToneristeControllerProvider implements GuentherControllerProviderInterface
         });
 
         $controllers->post("/", function() use($app) {
-            return $app['tonerliste']->insertToner();
+            $model = $app['request']->get("model", null);
+            return $app['tonerliste']->registerToner($model);
         });
-
-        $controllers->post("/{tonerId}", function($tonerId) use($app) {
-            return $app['tonerliste']->insertToner($tonerId);
-        })->bind("specific_toner");
 
         $controllers->get("/{tonerId}", function($tonerId) use($app) {
             return $app['tonerliste']->showToner($tonerId);
-        });
+        })->bind("specific_toner");
 
-        $controllers->put("/{tonerId}", function($tonerId) use($app) {
-            return $app['tonerliste']->updateToner($tonerId);
+        $controllers->post("/{tonerId}", function($tonerId) use($app) {
+            $reason = $app['request']->get("reason", null);
+            return $app['tonerliste']->depositToner($tonerId, $reason);
         });
 
         $controllers->delete("/{tonerId}", function($tonerId) use($app) {
-            return $app['tonerliste']->listAllToners($tonerId);
+            $reason = $app['request']->get("reason", null);
+            return $app['tonerliste']->listAllToners($tonerId, $reason);
         });
 
         return $controllers;
