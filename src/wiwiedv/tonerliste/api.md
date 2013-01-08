@@ -9,7 +9,7 @@
 
 ### Resources
 
-#### `GET` /
+#### `GET /`
 
 >Retrieve a list of all registered toner models
 
@@ -21,7 +21,7 @@
   * `X-Guenther-Version` Guenther version number
 
 
-#### `GET` /{tonerId}
+#### `GET /{tonerId}`
 
 >Retrieve a specific toner model, including its transaction history
 
@@ -34,7 +34,7 @@
   * `X-Guenther-Version` Guenther version number
 
 
-#### `POST` /
+#### `POST /`
 
 >Add a new toner model with initial stock 0
 
@@ -49,7 +49,7 @@
   * `Location` The URL of the newly created resource, if response code was 201
 
 
-#### `POST` /{tonerId}
+#### `POST /{tonerId}`
 
 >Deposit a toner for the specified model, i.e. increase stock by 1
 
@@ -64,12 +64,12 @@
   * `Location` The URL of the newly created resource, if response code was 201
 
 
-#### `DELETE` /{tonerId}
+#### `DELETE /{tonerId}`
 
 >Withdraw toner of the specified model, i.e. decrease stock by 1
 
 * Request parameters
-  * `body` __reason__ The reason for withdrawing, e.g. "wiwi-edv-prt01" or "", _mandatory_
+  * `body` __reason__ The reason for withdrawing, e.g. "wiwi-edv-prt01" or "test toner", _mandatory_
 * Possible responses
   * `200` Updated toner object
   * `400` _String literal_ "Missing parameter 'reason'"
