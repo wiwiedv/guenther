@@ -24,7 +24,7 @@
   * `X-Guenther-Version` Guenther version number
 
 
-#### `GET /{tonerId}`
+#### `GET /toner/{tonerId}`
 
 >Retrieve a specific toner model, including its transaction history
 
@@ -37,7 +37,7 @@
   * `X-Guenther-Version` Guenther version number
 
 
-#### `POST /`
+#### `POST /toner/`
 
 >Add a new toner model with initial stock 0
 
@@ -52,7 +52,7 @@
   * `Location` The URL of the newly created resource, if response code was 201
 
 
-#### `POST /{tonerId}`
+#### `POST /toner/{tonerId}/depositions`
 
 >Deposit a toner for the specified model, i.e. increase stock by 1
 
@@ -68,22 +68,7 @@
   * `Location` The URL of the newly created resource, if response code was 201
 
 
-#### `PUT /{tonerId}`
-
->Update information for the specified model
-
-* Request parameters
-  * `body` __model__ A new model name, _optional_
-  * `body` __hidden__ A truthy value to flag the model as hidden, _optional_
-* Possible responses
-  * `200` Updated toner object
-  * `404` _String literal_ "Not found"
-  * `500` _String literal_ "Could not store data"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
-
-
-#### `DELETE /{tonerId}`
+#### `POST /toner/{tonerId}/withdrawals`
 
 >Withdraw toner of the specified model, i.e. decrease stock by 1
 
@@ -94,5 +79,21 @@
   * `400` _String literal_ "Missing parameter 'reason'"
   * `404` _String literal_ "Not found"
   * `409` _String literal_ "Toner out of stock"
+  * `500` _String literal_ "Could not store data"
+* Response headers
+  * `X-Guenther-Version` Guenther version number
+
+
+#### `PUT /{tonerId}`
+
+>Update information for the specified model
+
+* Request parameters
+  * `body` __model__ A new model name, _optional_
+  * `body` __hidden__ A truthy value to flag the model as hidden, falsy otherwise, _optional_
+* Possible responses
+  * `200` Updated toner object
+  * `404` _String literal_ "Not found"
+  * `500` _String literal_ "Could not store data"
 * Response headers
   * `X-Guenther-Version` Guenther version number

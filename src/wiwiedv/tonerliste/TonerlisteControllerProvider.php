@@ -9,10 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 use wiwiedv\GuentherControllerProviderInterface;
 use wiwiedv\DoctrineConfigurationProviderInterface;
+use wiwiedv\SecurityConfigurationProviderInterface;
 
 use wiwiedv\Tonerliste\Tonerliste;
 
-class TonerlisteControllerProvider implements GuentherControllerProviderInterface, DoctrineConfigurationProviderInterface
+class TonerlisteControllerProvider implements GuentherControllerProviderInterface
+                                            , DoctrineConfigurationProviderInterface
+                                         // , SecurityConfigurationProviderInterface
 {
     const NAME = "Tonerliste";
 
@@ -32,29 +35,33 @@ class TonerlisteControllerProvider implements GuentherControllerProviderInterfac
             return $app['tonerliste']->listAllToners();
         });
 
-        $controllers->post("/", function() use($app) {
+        $controllers->get("/toner/{tonerId}", function($tonerId) use($app) {
+            return $app['tonerliste']->showToner($tonerId);
+        })->bind("specific_toner");
+
+        $controllers->post("/toner", function() use($app) {
             $model = $app['request']->get("model", null);
             return $app['tonerliste']->registerToner($model);
         });
 
-        $controllers->get("/{tonerId}", function($tonerId) use($app) {
-            return $app['tonerliste']->showToner($tonerId);
-        })->bind("specific_toner");
-
-        $controllers->post("/{tonerId}", function($tonerId) use($app) {
+        $controllers->post("/toner/{tonerId}/depositions", function($tonerId) use($app) {
             $reason = $app['request']->get("reason", null);
             return $app['tonerliste']->depositToner($tonerId, $reason);
         });
 
-        $controllers->put("/{tonerId}", function($tonerId) use($app) {
+        $controllers->post("/toner/{tonerId}/withdrawals", function($tonerId) use($app) {
+            $reason = $app['request']->get("reason", null);
+            return $app['tonerliste']->withdrawToner($tonerId, $reason);
+        });
+
+        $controllers->put("/toner/{tonerId}", function($tonerId) use($app) {
             $model = $app['request']->get("model", null);
             $hidden = $app['request']->get("hidden", null);
             return $app['tonerliste']->updateToner($tonerId, $model, $hidden);
         });
 
-        $controllers->delete("/{tonerId}", function($tonerId) use($app) {
-            $reason = $app['request']->get("reason", null);
-            return $app['tonerliste']->listAllToners($tonerId, $reason);
+        $controllers->match("*", function() {
+            return new Response("Method not implemented", 405);
         });
 
         return $controllers;
@@ -77,6 +84,10 @@ class TonerlisteControllerProvider implements GuentherControllerProviderInterfac
      */
     public function getName() {
         return self::NAME;
+    }
+
+    public function getSecurityConfiguration() {
+        // TODO: Implement getSecurityConfiguration() method.
     }
 
     /**
