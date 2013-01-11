@@ -21,6 +21,8 @@ $controllerProviders = array(
     new \wiwiedv\Tonerliste\TonerlisteControllerProvider()
 );
 
+$app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
+
 // Mount ControllerProviders
 // also, collect configs according to implemented interfaces
 foreach ($controllerProviders as $provider) {
@@ -37,7 +39,10 @@ foreach ($controllerProviders as $provider) {
     // twig paths and controllers
     if ($provider instanceof AbstractGuentherControllerProvider) {
         $app->mount("/" . $provider->getName(), $provider);
-        array_push($modules, array("name" => $provider->getName(false), "url" => "/" . $provider->getName()));
+        $modules = array(
+                       "name" => $provider->getName(false),
+                       "url" => $app['url_generator']->generate($provider->getName())
+                   );
     }
 }
 
@@ -48,7 +53,6 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => $firewallOptions
 ));
-$app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 
 $app['modules'] = $modules;
 
@@ -58,6 +62,11 @@ $app->before(function (Request $request) {
         $data = json_decode($request->getContent(), true);
         $request->request->replace(is_array($data) ? $data : array());
     }
+});
+
+// Set route for module listing
+$app->get('/modules', function() use($app) {
+    return new \wiwiedv\GuentherResponse($app['modules']);
 });
 
 // Set default controller
