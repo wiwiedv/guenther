@@ -12,13 +12,11 @@ class Tonerliste
 {
 
     public function listAllToners() {
-        // GET /
         $toners = $this->db()->fetchAll("SELECT * FROM toner");
         return new GuentherResponse($toners);
     }
 
     public function showToner($id) {
-        // GET /{tonerId}
         if (!($toner = $this->getTonerById($id))) {
             return new GuentherResponse("Not found", 404);
         }
@@ -28,7 +26,6 @@ class Tonerliste
     }
 
     public function registerToner($model) {
-        // POST /
         if (empty($model)) {
             return new GuentherResponse("Missing parameter 'model'", 400);
         }
@@ -46,7 +43,6 @@ class Tonerliste
     }
 
     public function depositToner($id, $reason) {
-        // POST /{tonerId}
         if (empty($reason)) {
             return new GuentherResponse("Missing parameter 'reason'", 400);
         }
@@ -70,7 +66,6 @@ class Tonerliste
     }
 
     public function updateToner($id, $model, $hidden) {
-        // PUT /{tonerId}
         if (!($toner = $this->getTonerById($id))) {
             return new GuentherResponse("Not found", 404);
         }
@@ -95,7 +90,6 @@ class Tonerliste
     }
 
     public function withdrawToner($id, $reason) {
-        // DELETE /{tonerId}
         if (empty($reason)) {
             return new GuentherResponse("Missing parameter 'reason'", 400);
         }
@@ -123,7 +117,7 @@ class Tonerliste
 
 
     private function getUrlForToner($id) {
-        return $this->app['url_generator']->generate('specific_toner', array("tonerId" => $id));
+        return $this->app['url_generator']->generate('tonerliste_toner', array("tonerId" => $id));
     }
 
     private function getTonerById($id) {

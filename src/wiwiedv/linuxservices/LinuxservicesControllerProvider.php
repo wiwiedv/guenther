@@ -30,10 +30,6 @@ class LinuxservicesControllerProvider
             return $linuxservices->index();
         })->bind($this->getName());
 
-        $controllers->get("/modules", function() use($app, $linuxservices) {
-            return $linuxservices->allModules();
-        });
-
         return $controllers;
     }
 }

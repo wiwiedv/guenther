@@ -36,7 +36,7 @@ abstract class AbstractGuentherControllerProvider implements ControllerProviderI
         return array(
             $this->getName() => array(
                 "driver"   => "pdo_sqlite",
-                "path"     => realpath("../db/" . $this->getName() . ".sqlite3"),
+                "path"     => realpath("../../db/" . $this->getName() . ".sqlite3"),
             )
         );
     }

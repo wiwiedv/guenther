@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +36,7 @@ foreach ($controllerProviders as $provider) {
 
     // twig paths and controllers
     if ($provider instanceof AbstractGuentherControllerProvider) {
-        $app->mount("/api/" . $provider->getName(), $provider);
+        $app->mount("/" . $provider->getName(), $provider);
         array_push($modules, array("name" => $provider->getName(false), "url" => "/" . $provider->getName()));
     }
 }
@@ -62,7 +62,7 @@ $app->before(function (Request $request) {
 
 // Set default controller
 $app->get("/", function() use($app) {
-    return $app->redirect("/api/linuxservices");
+    return $app->redirect($app['url_generator']->generate('linuxservices'));
 });
 
 $app->run();

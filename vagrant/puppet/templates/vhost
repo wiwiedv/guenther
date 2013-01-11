@@ -3,8 +3,8 @@
 
     DocumentRoot /srv/www/vhosts/guenther.dev/web
 
-    <Directory /srv/www/vhosts/guenther.dev/web>
-        FallbackResource /index.php
+    <Directory /srv/www/vhosts/guenther.dev/web/api>
+        FallbackResource /api/index.php
     </Directory>
 
     ErrorLog /var/log/apache2/error.log
