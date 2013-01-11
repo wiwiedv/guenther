@@ -5,14 +5,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use wiwiedv\DoctrineConfigurationProviderInterface;
-use wiwiedv\GuentherControllerProviderInterface;
+use wiwiedv\AbstractGuentherControllerProvider;
 use wiwiedv\SecurityConfigurationProviderInterface;
 
 $app = new Silex\Application();
 $app['debug'] = true;
+$modules = array();
 $dbsOptions = array();
 $firewallOptions = array();
-$twigOptions = array();
 
 // Instantiate ControllerProviders
 // insert new providers here.
@@ -35,9 +35,9 @@ foreach ($controllerProviders as $provider) {
     }
 
     // twig paths and controllers
-    if ($provider instanceof GuentherControllerProviderInterface) {
-        $twigOptions = array_merge($twigOptions, $provider->getTwigConfiguration());
-        $app->mount("/" . strtolower($provider->getName()), $provider);
+    if ($provider instanceof AbstractGuentherControllerProvider) {
+        $app->mount("/api/" . $provider->getName(), $provider);
+        array_push($modules, array("name" => $provider->getName(false), "url" => "/" . $provider->getName()));
     }
 }
 
@@ -45,13 +45,12 @@ foreach ($controllerProviders as $provider) {
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'dbs.options' => $dbsOptions
 ));
-$app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path' => $twigOptions,
-));
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => $firewallOptions
 ));
 $app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
+
+$app['modules'] = $modules;
 
 // Register middleware to handle json data in requests
 $app->before(function (Request $request) {
@@ -63,7 +62,7 @@ $app->before(function (Request $request) {
 
 // Set default controller
 $app->get("/", function() use($app) {
-    return $app->redirect("/linuxservices");
+    return $app->redirect("/api/linuxservices");
 });
 
 $app->run();

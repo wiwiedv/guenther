@@ -7,18 +7,16 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use wiwiedv\GuentherControllerProviderInterface;
+use wiwiedv\AbstractGuentherControllerProvider;
 use wiwiedv\DoctrineConfigurationProviderInterface;
 use wiwiedv\SecurityConfigurationProviderInterface;
 
 use wiwiedv\Tonerliste\Tonerliste;
 
-class TonerlisteControllerProvider implements GuentherControllerProviderInterface
-                                            , DoctrineConfigurationProviderInterface
-                                         // , SecurityConfigurationProviderInterface
+class TonerlisteControllerProvider
+    extends AbstractGuentherControllerProvider
+    implements DoctrineConfigurationProviderInterface, SecurityConfigurationProviderInterface
 {
-    const NAME = "Tonerliste";
-
     /**
      * @param \Silex\Application $app
      * @return \Silex\ControllerCollection
@@ -27,37 +25,35 @@ class TonerlisteControllerProvider implements GuentherControllerProviderInterfac
         /** @var $controllers ControllerCollection */
         $controllers = $app['controllers_factory'];
 
-        $app[strtolower(self::NAME)] = function($app) {
-            return new Tonerliste($app);
-        };
+        $tonerliste = new Tonerliste($app, $this->getName());
 
-        $controllers->get("/", function() use($app) {
-            return $app['tonerliste']->listAllToners();
+        $controllers->get("/", function(Request $request) use($app, $tonerliste) {
+            return $tonerliste->listAllToners();
+        })->bind($this->getName());
+
+        $controllers->get("/toner/{tonerId}", function(Request $request, $tonerId) use($app, $tonerliste) {
+            return $tonerliste->showToner($tonerId);
+        })->bind($this->getName() . "_toner");
+
+        $controllers->post("/toner", function(Request $request) use($app, $tonerliste) {
+            $model = $request->get("model", null);
+            return $tonerliste->registerToner($model);
         });
 
-        $controllers->get("/toner/{tonerId}", function($tonerId) use($app) {
-            return $app['tonerliste']->showToner($tonerId);
-        })->bind("specific_toner");
-
-        $controllers->post("/toner", function() use($app) {
-            $model = $app['request']->get("model", null);
-            return $app['tonerliste']->registerToner($model);
+        $controllers->post("/toner/{tonerId}/depositions", function(Request $request, $tonerId) use($app, $tonerliste) {
+            $reason = $request->get("reason", null);
+            return $tonerliste->depositToner($tonerId, $reason);
         });
 
-        $controllers->post("/toner/{tonerId}/depositions", function($tonerId) use($app) {
-            $reason = $app['request']->get("reason", null);
-            return $app['tonerliste']->depositToner($tonerId, $reason);
+        $controllers->post("/toner/{tonerId}/withdrawals", function(Request $request, $tonerId) use($app, $tonerliste) {
+            $reason = $request->get("reason", null);
+            return $tonerliste->withdrawToner($tonerId, $reason);
         });
 
-        $controllers->post("/toner/{tonerId}/withdrawals", function($tonerId) use($app) {
-            $reason = $app['request']->get("reason", null);
-            return $app['tonerliste']->withdrawToner($tonerId, $reason);
-        });
-
-        $controllers->put("/toner/{tonerId}", function($tonerId) use($app) {
-            $model = $app['request']->get("model", null);
-            $hidden = $app['request']->get("hidden", null);
-            return $app['tonerliste']->updateToner($tonerId, $model, $hidden);
+        $controllers->put("/toner/{tonerId}", function(Request $request, $tonerId) use($app, $tonerliste) {
+            $model = $request->get("model", null);
+            $hidden = $request->get("hidden", null);
+            return $tonerliste->updateToner($tonerId, $model, $hidden);
         });
 
         $controllers->match("*", function() {
@@ -65,37 +61,5 @@ class TonerlisteControllerProvider implements GuentherControllerProviderInterfac
         });
 
         return $controllers;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDBConfiguration() {
-        return array(
-            strtolower(self::NAME) => array(
-                "driver"   => "pdo_sqlite",
-                "path"     => realpath("../db/" . strtolower(self::NAME) . ".sqlite3"),
-            )
-        );
-    }
-
-    /**
-     * @return string
-     */
-    public function getName() {
-        return self::NAME;
-    }
-
-    public function getSecurityConfiguration() {
-        // TODO: Implement getSecurityConfiguration() method.
-    }
-
-    /**
-     * @return array
-     */
-    public function getTwigConfiguration() {
-        return array(
-            __DIR__ . "/views"
-        );
     }
 }

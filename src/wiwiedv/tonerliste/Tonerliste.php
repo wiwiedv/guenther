@@ -4,21 +4,16 @@ namespace wiwiedv\Tonerliste;
 
 use Silex\Application;
 
+use wiwiedv\AbstractGuentherModule;
 use wiwiedv\GuentherResponse;
 
 class Tonerliste
+    extends AbstractGuentherModule
 {
-    private $app;
-    private $db;
-
-    public function __construct($app) {
-        $this->app = $app;
-        $this->db = $this->app['dbs']['tonerliste'];
-    }
 
     public function listAllToners() {
         // GET /
-        $toners = $this->db->fetchAll("SELECT * FROM toner");
+        $toners = $this->db()->fetchAll("SELECT * FROM toner");
         return new GuentherResponse($toners);
     }
 
@@ -39,12 +34,12 @@ class Tonerliste
         }
 
         // store new model to db with initial stock 0
-        $res = $this->db->insert("toner", array("model" => $model, "stock" => 0));
+        $res = $this->db()->insert("toner", array("model" => $model, "stock" => 0));
         if (false === $res) {
             return new GuentherResponse("Could not store data", 500);
         }
 
-        $id = $this->db->lastInsertId();
+        $id = $this->db()->lastInsertId();
         $toner = $this->getTonerById($id);
 
         return new GuentherResponse($toner, 201, array("Location" => $this->getUrlForToner($id)));
@@ -62,7 +57,7 @@ class Tonerliste
 
         // toner model exists, increment stock.
         $toner['stock'] += 1;
-        $res = $this->db->update("toner",
+        $res = $this->db()->update("toner",
                                  array("stock" => $toner['stock']),
                                  array("id" => $toner['id']));
         $res = $res && $this->saveTransactionForToner($toner['id'], 1, $reason);
@@ -88,7 +83,7 @@ class Tonerliste
             $toner['hidden'] = (!!$hidden ? 1 : 0);
         }
 
-        $res = $this->db->update("toner",
+        $res = $this->db()->update("toner",
                           array("model" => $toner['model'], "hidden" => intval($toner['hidden'])),
                           array("id" => $toner['id']));
 
@@ -114,7 +109,7 @@ class Tonerliste
         }
 
         $toner['stock'] -= 1;
-        $res = $this->db->update("toner",
+        $res = $this->db()->update("toner",
                                  array("stock" => $toner['stock']),
                                  array("id" => $toner['id']));
         $res = $res && $this->saveTransactionForToner($toner['id'], 2, $reason);
@@ -132,11 +127,11 @@ class Tonerliste
     }
 
     private function getTonerById($id) {
-        return $this->db->fetchAssoc("SELECT * FROM toner WHERE id = ?", array($id));
+        return $this->db()->fetchAssoc("SELECT * FROM toner WHERE id = ?", array($id));
     }
 
     private function getTransactionsForToner($id) {
-        return $this->db->fetchAll("SELECT * FROM transactions WHERE toner = ?", array($id));
+        return $this->db()->fetchAll("SELECT * FROM transactions WHERE toner = ?", array($id));
     }
 
     private function saveTransactionForToner($id, $transactionType, $reason) {
@@ -147,7 +142,7 @@ class Tonerliste
             $user = $token->getUser();
         }
 
-        return 1 === $this->db->insert("transactions",
+        return 1 === $this->db()->insert("transactions",
                                        array(
                                            "date" => time(),
                                            "type" => $transactionType,

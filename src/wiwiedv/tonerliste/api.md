@@ -84,7 +84,7 @@
   * `X-Guenther-Version` Guenther version number
 
 
-#### `PUT /{tonerId}`
+#### `PUT /toner/{tonerId}`
 
 >Update information for the specified model
 
