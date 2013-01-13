@@ -60,7 +60,7 @@
               <%- color==4 ? 'yellow' : '' %>
               <%- color==5 ? 'universal' : '' %></td>
               <td><%- toner.get('stock') %></td>
-              <td><a href="#edit/<%- toner.get('id') %>" class="btn btn-small btn-warning"><i class="icon-edit icon-white"></i> Ändern</a></td>
+              <td><a href="#/edit/<%- toner.id %>" class="btn btn-small btn-warning"><i class="icon-edit icon-white"></i> Ändern</a></td>
             </tr>
           <% }}); %>
         </tbody>
@@ -71,13 +71,29 @@
   <script type="text/template" id="edit-toner-template">
     <form class="edit-toner-form">
       <div class="well-box">
-        <legend>Erstelle ein neues Modell</legend>
+        <legend><%- toner ? 'Ändere ein ' : 'Erstelle ein ' %>Modell</legend>
         <label>Drucker</label>
-        <input type="text" name="printer">
+        <input type="text" name="printer" value='<%- toner ? toner.get('printer') : '' %>'>
         <label>Modell</label>
-        <input type="text" name="model">
+        <input type="text" name="model" value='<%- toner ? toner.get('name') : '' %>'>
+        <label>Typ</label>
+        <select name="type">
+          <option <%- toner&&toner.get('type')=='Toner' ? 'selected="selected"' : '' %>>Toner</option>
+          <option <%- toner&&toner.get('type')=='Trommel' ? 'selected="selected"' : '' %>>Trommel</option>
+        </select>
+        <label>Farbe</label>
+        <select name="color">
+          <option <%- toner&&toner.get('color')=='black' ? 'selected="selected"' : '' %>>black</option>
+          <option <%- toner&&toner.get('color')=='magenta' ? 'selected="selected"' : '' %>>magenta</option>
+          <option <%- toner&&toner.get('color')=='cyan' ? 'selected="selected"' : '' %>>cyan</option>
+          <option <%- toner&&toner.get('color')=='yellow' ? 'selected="selected"' : '' %>>yellow</option>
+          <option <%- toner&&toner.get('color')=='universal' ? 'selected="selected"' : '' %>>universal</option>
+        </select>
         <hr/ >
-        <button type="submit" class="btn btn-success">Erstellen</button>
+        <% if(toner) { %>
+          <input type ="hidden" name="id" value="<%- toner.id %>" />
+        <% }; %>
+        <button type="submit" class="btn btn-success"><%- toner ? 'Ändern' : 'Erstellen' %></button>
         <a href="#" class="btn ">Abbrechen</a>
       </div>
     </form>
@@ -85,8 +101,28 @@
 
   <script>
 
+    $.fn.serializeObject = function() {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+    };
+
     var Toners = Backbone.Collection.extend({
       url: '/api/tonerliste/'
+    });
+
+     var Toner = Backbone.Model.extend({
+      urlRoot: '/api/tonerliste/toner'
     });
 
     var TonerList = Backbone.View.extend({
@@ -105,17 +141,52 @@
 
     var EditToner = Backbone.View.extend({
       el: '.page',
-      render: function(){
-        var template = _.template($('#edit-toner-template').html(), {});
-        this.$el.html(template);
-      }
+      render: function(options){
+        var that = this;
+        if(options.id){
+          var toner = new Toner({id: options.id});
+          toner.fetch({
+            success: function(toner){
+              var template = _.template($('#edit-toner-template').html(), {toner: toner});
+              that.$el.html(template);
+            }
+          })
+        } else {
+          var template = _.template($('#edit-toner-template').html(), {toner: null});
+          this.$el.html(template);
+        }
+      },
+      events: {
+        'submit .edit-toner-form': 'saveToner',
+      },
+      saveToner: function(ev){
+        var tonerDetails = $(ev.currentTarget).serializeObject();
+        tonerDetails['type'] = tonerDetails['type'] == 'Toner' ? '1' : '2';
+        switch(tonerDetails['color']){
+          case 'black' : tonerDetails['color']='1'; break;
+          case 'magenta' : tonerDetails['color']='2'; break;
+          case 'cyan' : tonerDetails['color']='3'; break;
+          case 'yellow' : tonerDetails['color']='4'; break;
+          case 'universal' : tonerDetails['color']='5'; break;
+          default : tonerDetails['color']='6'; break;
+        }
+        var toner = new Toner();
+        toner.save(tonerDetails, {
+          success: function(toner) {
+            router.navigate('', {trigger: true});
+          }
+        });
+        return false;
+     }
     }); 
 
     var Router = Backbone.Router.extend({
       routes: {
-        "": "home",
-        "all": "all",
-        "new": "newToner"
+        '': 'home',
+        'all': 'all',
+        'new': 'editToner',
+        'edit/:id': 'editToner'
+
       }
     });
 
@@ -131,8 +202,8 @@
       tonerList.render(1);
     });
 
-     router.on('route:newToner', function(){
-      editToner.render();
+     router.on('route:editToner', function(id){
+      editToner.render({id: id});
     });
 
     Backbone.history.start();
