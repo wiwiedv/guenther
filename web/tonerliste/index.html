@@ -1,62 +1,147 @@
-
-
-<!DOCTYPE HTML>
-<html lang="en-US">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tonerliste</title>
-    <style type="text/css">
-        #container { padding:20px; border:1px solid #333; width:400px; }
-        #list-template { display:none; }
-    </style>
-</head>
-<body> 
-<div id="container">
-    <button>Load</button>
-    <ul id="list">
-    </ul>
-</div>
- 
-<div id="list-template">
-<li><a href=""></a></li>
-</div>
- 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
-<script type="text/javascript" src="http://documentcloud.github.com/backbone/backbone-min.js"></script>
-<script type="text/javascript">
-var toner = JSON.stringify("Array ( [0] => Array ( [name] => Toner1 [stock] => 4 ) [1] => Array ( [name] => Toner2 [stock] => 9 ) )");
-console.log(toner);
-model = new Backbone.Model({
-    data:[
-        { text: "Google", href: "http://google.com" },
-        { text: "Facebook", href: "http://facebook.com" },
-        { text: "Youtube", href: "http://youtube.com" }
-    ]
-});
- 
-var View = Backbone.View.extend({
-    initialize: function () {
-        this.template = $('#list-template').children();
-    },
-    el: '#container',
-    events: {
-        "click button": "render"
-    },
-    render: function() {
-        var data = this.model.get('data');
-       
-        for (var i=0, l=data.length; i<l; i++) {
-            var li = this.template.clone().find('a').attr('href', data[i].href).text(data[i].text).end();
-            this.$el.find('ul').append(li);
-        }
+  <meta charset="utf-8">
+  <title>Tonerliste</title>
+  <link href="../lib/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 5px;
     }
-});
- 
-var view = new View({ model: model });
+  </style>
+  <link href="css/style.css" rel="stylesheet">
+  <link href="../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
+</head>
+<body>
 
-</script>
+
+  <div class="container">    
+    <center><h1>Tonerliste</h1></center>
+    <hr />
+    <div class="page"></div>
+  </div>
+
+
+  <script src="../lib/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+  <script src="../lib/js/bootstrap.min.js" type="text/javascript"></script>  
+  <script src="../lib/js/underscore-min.js" type="text/javascript"></script>
+  <script src="../lib/js/backbone-min.js" type="text/javascript"></script>
+  <script type="text/template" id="toner-list-template">        
+    <div class="well-box">
+      <table class="table table-hover table-condensed">
+        <p><a href="#new" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Modell hinzufügen</a>
+        <% if(hidden==0){ %>
+        <a href="#all" class="btn btn-info btn-mini"><i class="icon-eye-open icon-white"></i> Versteckte Einblenden</a></p>
+        <% }else{ %>
+        <a href="#" class="btn btn-info btn-mini"><i class="icon-eye-close icon-white"></i> Versteckte Ausblenden</a></p>
+        <% } %>
+        <thead>
+          <tr>
+            <th>Drucker</th>
+            <th>Modell</th>
+            <th>Typ</th>
+            <th>Farbe</th>
+            <th>Anzahl</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tobdy>
+          <% _.each(toners, function(toner){ %>
+          <% if(toner.get('hidden')==0||hidden==1){ %>
+            <tr class="<%- toner.get('stock')>0&&toner.get('stock')<3 ? 'warning' :'' %>
+            <%- toner.get('stock')==0 ? 'error' : '' %>">
+              <td><%- toner.get('printer') %></td>
+              <td><%- toner.get('name') %></td>
+              <td><%- toner.get('typ')==1 ? 'Toner' : 'Trommel'  %></td>
+              <td><%  var color = toner.get('color')%>
+              <%- color==1 ? 'black' : '' %>
+              <%- color==2 ? 'magenta' : '' %>
+              <%- color==3 ? 'cyan' : '' %>
+              <%- color==4 ? 'yellow' : '' %>
+              <%- color==5 ? 'universal' : '' %></td>
+              <td><%- toner.get('stock') %></td>
+              <td><a href="#edit/<%- toner.get('id') %>" class="btn btn-small btn-warning"><i class="icon-edit icon-white"></i> Ändern</a></td>
+            </tr>
+          <% }}); %>
+        </tbody>
+      <tables>
+    </div>
+  </script>
+
+  <script type="text/template" id="edit-toner-template">
+    <form class="edit-toner-form">
+      <div class="well-box">
+        <legend>Erstelle ein neues Modell</legend>
+        <label>Drucker</label>
+        <input type="text" name="printer">
+        <label>Modell</label>
+        <input type="text" name="model">
+        <hr/ >
+        <button type="submit" class="btn btn-success">Erstellen</button>
+        <a href="#" class="btn ">Abbrechen</a>
+      </div>
+    </form>
+  </script>
+
+  <script>
+
+    var Toners = Backbone.Collection.extend({
+      url: '/api/tonerliste/'
+    });
+
+    var TonerList = Backbone.View.extend({
+      el: '.page',
+      render : function(hidden) {
+        var that = this;
+        var toners = new Toners();
+        toners.fetch({
+          success: function(toners){  
+            var template = _.template($('#toner-list-template').html(), {toners: toners.models, hidden: hidden});          
+            that.$el.html(template);
+          }
+        });
+      }
+    });
+
+    var EditToner = Backbone.View.extend({
+      el: '.page',
+      render: function(){
+        var template = _.template($('#edit-toner-template').html(), {});
+        this.$el.html(template);
+      }
+    }); 
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        "": "home",
+        "all": "all",
+        "new": "newToner"
+      }
+    });
+
+    var tonerList = new TonerList();
+    var editToner = new EditToner();
+
+    var router = new Router;
+    router.on('route:home', function(){
+      tonerList.render(0);
+    });
+
+    router.on('route:all', function(){
+      tonerList.render(1);
+    });
+
+     router.on('route:newToner', function(){
+      editToner.render();
+    });
+
+    Backbone.history.start();
+
+  </script>
+
+
 </body>
-</html>
+</html> 
+
 
 

@@ -1,47 +1,75 @@
-
-<!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <title>Linuxservices</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <!-- Le styles -->
-    <link href="../lib/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 5px; /* 60px to make the container go all the way to the bottom of the topbar */
-      }
-    </style>
-    <link href="css/style.css" rel="stylesheet">
-    <link href="../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Fav and touch icons -->
-
-  </head>
-
-  <body>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Tonerliste</title>
+  <link href="../lib/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 5px;
+    }
+  </style>
+  <link href="css/style.css" rel="stylesheet">
+  <link href="../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
+</head>
+<body>
 
     <div class="container">
       <center><h1>Linuxservices</h1></center>
-      <div class="well-box" onclick="window.location.href='/tonerliste'">
-        <h1>Tonerliste</h1>
-     </div>
-    </div> <!-- /container -->
+      <hr />
+      <div class="page"></div>
+    </div> 
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../lib/js/bootstrap.min.js"></script>
-    <script src="../lib/js/jquery-1.8.3.min"></script>
-    <script src="../lib/js/backbone-min.js"></script>
+    <script type="text/template" id="module-list-template">
+      <% _.each(modules, function(module){  %>
+      <div class="well-box" onclick="window.location = '<%= htmlEncode(module.get('url'))%>'">
+        <h2><%= htmlEncode(module.get('name'))%></h2>
+      </div>
+      <% }); %>
+    </script>
 
+    <script src="../lib/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="../lib/js/bootstrap.min.js" type="text/javascript"></script>  
+    <script src="../lib/js/underscore-min.js" type="text/javascript"></script>
+    <script src="../lib/js/backbone-min.js" type="text/javascript"></script>
+    <script>
+    
+      function htmlEncode(value){
+      return $('<div/>').text(value).html();
+      }
+
+      var Modules = Backbone.Collection.extend({
+        url: '/api/modules'
+      });
+
+      var ModuleList = Backbone.View.extend({
+        el : '.page',
+        render: function() {
+          var that = this;
+          var modules = new Modules();
+          modules.fetch({
+            success: function(modules){
+              var template = _.template($('#module-list-template').html(), {modules: modules.models})
+              that.$el.html(template);              
+            }
+          });
+        }
+      });
+
+      var Router = Backbone.Router.extend({
+        routes : {
+          '' : 'home'
+        }
+      });
+
+      var moduleList = new ModuleList();
+
+      var router = new Router();
+      router.on('route:home', function() {
+        moduleList.render();
+      });
+
+      Backbone.history.start();
+    </script>
   </body>
 </html>
