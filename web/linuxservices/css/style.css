@@ -1,0 +1,21 @@
+.well-box {
+  cursor: pointer;
+  min-height: 40px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 8px;
+  padding-left: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  background-repeat: repeat-x;
+  border: 1px solid #D4D4D4;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  overflow: hidden;
+}
