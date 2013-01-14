@@ -92,17 +92,15 @@ The `transaction` represents a modification of an `item`. The data is structured
 
 ### Resources
 
-#### `GET   /`
+#### Requesting `GET   /[toners|drums]` or `GET   /`
 
-#### `GET   /[toners|drums]`
-
-Returns an array of all registered items, toners or drums
+Returns an array of all registered toners, drums or items
 
 ##### Response Body
 
 * `200` Array of requested items
 
-#### `GET   /[toner|drum]/{id}`
+#### Requesting `GET   /[toner|drum]/{id}`
 
 Returns a single toner or drum item, including its complete transaction history
 
@@ -115,7 +113,7 @@ Returns a single toner or drum item, including its complete transaction history
 * `200` Requested item including its complete transaction history
 * `404` Error message
 
-#### `POST  /[toners|drums]`
+#### Requesting `POST  /[toners|drums]`
 
 Creates a new toner or drum item, returns said item on success
 
@@ -137,7 +135,7 @@ A valid JSON object, containing the following fields:
 * `400` Error message
 * `500` Error message
 
-#### `POST  /[toner|drum]/{id}/transactions`
+#### Requesting `POST  /[toner|drum]/{id}/transactions`
 
 Deposit or withdraw a toner or drum, i.e. increase or decrease stock by 1
 
@@ -157,7 +155,7 @@ A valid JSON object, containing the following fields:
 * `409` Error message
 * `500` Error message
 
-#### `PUT   /[toner|drum]/{id}`
+#### Requesting `PUT   /[toner|drum]/{id}`
 
 Update a single item
 
