@@ -27,35 +27,54 @@ class TonerlisteControllerProvider
 
         $tonerliste = new Tonerliste($app, $this->getName());
 
-        $controllers->get("/", function(Request $request) use($app, $tonerliste) {
-            return $tonerliste->listAllToners();
-        })->bind($this->getName());
+        // GET
+        $controllers->get("/{type}", function(Request $request, $type) use($app, $tonerliste) {
+            return $tonerliste->listAll($type);
+        })->assert('type', '((toner|drum)s?|)')
+          ->bind("tonerliste");
 
-        $controllers->get("/toner/{tonerId}", function(Request $request, $tonerId) use($app, $tonerliste) {
-            return $tonerliste->showToner($tonerId);
-        })->bind($this->getName() . "_toner");
+        $controllers->get("/{type}/{id}", function(Request $request, $type, $id) use($app, $tonerliste) {
+            return $tonerliste->getItem($id, $type);
+        })->assert('type', '((toner|drum)s?)')
+          ->assert('id', '\d+')
+          ->bind("tonerliste_get_item");
 
-        $controllers->post("/toner", function(Request $request) use($app, $tonerliste) {
-            $model = $request->get("model", null);
-            return $tonerliste->registerToner($model);
-        });
+        // POST
+        $controllers->post("/{type}", function(Request $request, $type) use($app, $tonerliste) {
+            return $tonerliste->newItem(
+                $request->get("name"),
+                $type,
+                $request->get("color"),
+                $request->get("printer")
+            );
+        })->assert('type', '((toner|drum)s?)')
+          ->bind('');
 
-        $controllers->post("/toner/{tonerId}/depositions", function(Request $request, $tonerId) use($app, $tonerliste) {
-            $reason = $request->get("reason", null);
-            return $tonerliste->depositToner($tonerId, $reason);
-        });
+        $controllers->post("/{type}/{id}/transactions", function(Request $request, $type, $id) use($app, $tonerliste) {
+            return $tonerliste->newTransaction(
+                $id,
+                $request->get('action'),
+                $request->get('reason')
+            );
+        })->assert('type', '(toner|drum)')
+          ->assert('id', '\d+')
+          ->bind("tonerliste_post_transaction");
 
-        $controllers->post("/toner/{tonerId}/withdrawals", function(Request $request, $tonerId) use($app, $tonerliste) {
-            $reason = $request->get("reason", null);
-            return $tonerliste->withdrawToner($tonerId, $reason);
-        });
+        // PUT
+        $controllers->put("/{type}/{id}", function(Request $request, $type, $id) use($app, $tonerliste) {
+            return $tonerliste->modifyItem(
+                $id,
+                $request->get('name'),
+                $request->get('color'),
+                $request->get('printer'),
+                $request->get('hidden'),
+                $type
+            );
+        })->assert('type', '(toner|drum)')
+          ->assert('id', '\d+')
+          ->bind('tonerliste_put_item');
 
-        $controllers->put("/toner/{tonerId}", function(Request $request, $tonerId) use($app, $tonerliste) {
-            $model = $request->get("model", null);
-            $hidden = $request->get("hidden", null);
-            return $tonerliste->updateToner($tonerId, $model, $hidden);
-        });
-
+        // FALLBACK
         $controllers->match("*", function() {
             return new Response("Method not implemented", 405);
         });

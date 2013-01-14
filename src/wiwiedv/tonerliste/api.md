@@ -1,99 +1,173 @@
-## Tonerliste API
+# Tonerliste
 
-### Conventions
+## Conventions
 
-#### Transaction Types
-* `1` Toner deposited
-* `2` Toner withdrawn
+### Enums
 
-#### Data Structures
-* Toner
-  *
+* `items.type` is one numerical value out of
+  * `1` meaning toner
+  * `2` meaning drum
+* `items.color` is one numerical value out of
+  * `1` meaning black
+  * `2` meaning magenta
+  * `3` meaning cyan
+  * `4` meaning yellow
+  * `5` meaning universal
+* `items.hidden` is one numerical value out of
+  * `0` meaning visible
+  * `1` meaning hidden
+* `transactions.action` is one numerical value out of
+  * `1` meaning deposit
+  * `2` meaning withdraw
+  * `3` meaning create
+  * `4` meaning modify
+
+## Database Structure
+
+### Table `items`
+    CREATE TABLE "items" (
+      "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+      "name" TEXT NOT NULL UNIQUE,
+      "type" INTEGER NOT NULL,
+      "color" INTEGER NOT NULL DEFAULT 1,
+      "printer" TEXT,
+      "stock" INTEGER NOT NULL DEFAULT 0,
+      "hidden" BOOL NOT NULL DEFAULT 0
+    );
+
+### Table `transactions`
+    CREATE TABLE "transactions" (
+      "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+      "date" DATETIME NOT NULL,
+      "action" INTEGER NOT NULL,
+      "user" TEXT NOT NULL,
+      "item" INTEGER NOT NULL,
+      "reason" TEXT NOT NULL
+    );
+
+## Exposed Data Structure
+
+### The `toner`
+
+The `toner` is an `item`.
+
+### The `drum`
+
+The `drum` is an `item`.
+
+### The `item`
+
+The `item` represents either a `toner` or a `drum`. The data is structured as follows:
+
+* `id` _integer_, unique
+* `name` _string_, unique
+* `type` _integer_, see Enums
+* `color` _integer_, see Enums
+* `printer` _string_
+* `stock` _integer_
+* `hidden` _boolean_, see Enums
+
+### The `transaction`
+
+The `transaction` represents a modification of an `item`. The data is structured as follows:
+
+* `id` _integer_, unique
+* `date` _integer_
+* `action` _integer_, see Enums
+* `user` _string_
+* `item` _integer_, refers to `item.id`
+* `reason` _string_
+
+## Exposed API
+
+### Commonalities
+
+##### Request Header
+
+* `Authorization` Provide HTTP Basic authorization credentials
+
+##### Response Header
+
+* `X-Guenther-Version` Guenther version number
 
 ### Resources
 
-#### `GET /`
+#### `GET   /`
 
->Retrieve a list of all registered toner models
+#### `GET   /[toners|drums]`
 
-* Request parameters
-  * _none_
-* Possible responses
-  * `200` Array of toner objects
-* Response headers
-  * `X-Guenther-Version` Guenther version number
+Returns an array of all registered items, toners or drums
 
+##### Response Body
 
-#### `GET /toner/{tonerId}`
+* `200` Array of requested items
 
->Retrieve a specific toner model, including its transaction history
+#### `GET   /[toner|drum]/{id}`
 
-* Request parameters
-  * _none_
-* Possible responses
-  * `200` Toner object including transaction history
-  * `404` _String literal_ "Not found"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
+Returns a single toner or drum item, including its complete transaction history
 
+##### Response Header
 
-#### `POST /toner/`
+* `Location` The URL of the newly created resource, if response code was 201
 
->Add a new toner model with initial stock 0
+##### Response Body
 
-* Request parameters
-  * `body` __model__ The name of the toner model, _mandatory_
-* Possible responses
-  * `201` Newly created toner object
-  * `400` _String literal_ "Missing parameter 'model'"
-  * `500` _String literal_ "Could not store data"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
-  * `Location` The URL of the newly created resource, if response code was 201
+* `200` Requested item including its complete transaction history
+* `404` Error message
 
+#### `POST  /[toners|drums]`
 
-#### `POST /toner/{tonerId}/depositions`
+Creates a new toner or drum item, returns said item on success
 
->Deposit a toner for the specified model, i.e. increase stock by 1
+##### Request Body
 
-* Request parameters
-  * `body` __reason__ The reason for depositing, e.g. "refill" or "put back", _mandatory_
-* Possible responses
-  * `201` Updated toner object
-  * `400` _String literal_ "Missing parameter 'reason'"
-  * `404` _String literal_ "Not found"
-  * `500` _String literal_ "Could not store data"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
-  * `Location` The URL of the newly created resource, if response code was 201
+A valid JSON object, containing the following fields:
 
+* `name` _string_ The model name
+* `color` _integer_ The item's color, see Enums
+* `printer` _string_ The printer model to use this item in
 
-#### `POST /toner/{tonerId}/withdrawals`
+##### Response Header
 
->Withdraw toner of the specified model, i.e. decrease stock by 1
+* `Location` The URL of the newly created resource, if response code was 201
 
-* Request parameters
-  * `body` __reason__ The reason for withdrawing, e.g. "wiwi-edv-prt01" or "test toner", _mandatory_
-* Possible responses
-  * `200` Updated toner object
-  * `400` _String literal_ "Missing parameter 'reason'"
-  * `404` _String literal_ "Not found"
-  * `409` _String literal_ "Toner out of stock"
-  * `500` _String literal_ "Could not store data"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
+##### Response Body
 
+* `201` Newly created item
+* `400` Error message
+* `500` Error message
 
-#### `PUT /toner/{tonerId}`
+#### `POST  /[toner|drum]/{id}/transactions`
 
->Update information for the specified model
+Deposit or withdraw a toner or drum, i.e. increase or decrease stock by 1
 
-* Request parameters
-  * `body` __model__ A new model name, _optional_
-  * `body` __hidden__ A truthy value to flag the model as hidden, falsy otherwise, _optional_
-* Possible responses
-  * `200` Updated toner object
-  * `404` _String literal_ "Not found"
-  * `500` _String literal_ "Could not store data"
-* Response headers
-  * `X-Guenther-Version` Guenther version number
+##### Request Body
+
+A valid JSON object, containing the following fields:
+
+* `action` _integer_ The transaction action, see Enums
+* `reason` _string_ The reason for this transaction
+
+##### Response Body
+
+* `204` Empty
+* `400` Error message
+* `403` Error message
+* `404` Error message
+* `409` Error message
+* `500` Error message
+
+#### `PUT   /[toner|drum]/{id}`
+
+Update a single item
+
+##### Request Body
+
+A valid JSON object, containing a complete item
+
+##### Response Body
+
+* `200` Updated item
+* `400` Error message
+* `404` Error message
+* `500` Error message
