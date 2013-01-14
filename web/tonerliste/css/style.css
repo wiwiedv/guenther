@@ -18,3 +18,19 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
   overflow: hidden;
 }
+
+.legend-blank {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: 21px;
+  line-height: 40px;
+  color: #333;
+  border: 0;
+  border-bottom: none;
+}
+
+h1 {
+font-size: 38.5px;
+}
