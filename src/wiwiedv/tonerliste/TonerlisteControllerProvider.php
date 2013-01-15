@@ -31,6 +31,7 @@ class TonerlisteControllerProvider
         $controllers->get("/{type}", function(Request $request, $type) use($app, $tonerliste) {
             return $tonerliste->listAll($type);
         })->assert('type', '((toner|drum)s?|)')
+          ->value('type', '')
           ->bind("tonerliste");
 
         $controllers->get("/{type}/{id}", function(Request $request, $type, $id) use($app, $tonerliste) {

@@ -24,7 +24,7 @@ class Tonerliste
     public function listAll($type = null) {
         $items = $this->fetchFromItems(null, $type);
 
-        if ($items) {
+        if (is_array($items)) {
             return new GuentherResponse($items);
         } else {
             return new GuentherResponse("Error retrieving data", 500);
@@ -90,7 +90,7 @@ class Tonerliste
         $response = $this->getItem($id, $type);
         if ($response->getStatusCode() == 200) {
             $response->setStatusCode(201)
-                     ->headers->add(['Location' => $this->getUrlForItem($id, $type)]);
+                     ->headers->add(['Location' => $this->generateUrl("tonerliste_get_item", ['id' => $id, 'type' => $type])]);
         }
         return $response;
     }
@@ -280,8 +280,8 @@ class Tonerliste
         return false;
     }
 
-    private function getUrlForItem($id, $route) {
-        return $this->app['url_generator']->generate($route, array("id" => $id));
+    private function generateUrl($route, $params) {
+        return $this->app['url_generator']->generate($route, $params);
     }
 
     /**
