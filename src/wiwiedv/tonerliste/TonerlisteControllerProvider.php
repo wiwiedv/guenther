@@ -30,13 +30,13 @@ class TonerlisteControllerProvider
         // GET
         $controllers->get("/{type}", function(Request $request, $type) use($app, $tonerliste) {
             return $tonerliste->listAll($type);
-        })->assert('type', '((toner|drum)s?|)')
+        })->assert('type', '((toner|drum)s|)')
           ->value('type', '')
           ->bind("tonerliste");
 
         $controllers->get("/{type}/{id}", function(Request $request, $type, $id) use($app, $tonerliste) {
             return $tonerliste->getItem($id, $type);
-        })->assert('type', '((toner|drum)s?)')
+        })->assert('type', '(toner|drum)')
           ->assert('id', '\d+')
           ->bind("tonerliste_get_item");
 
@@ -48,7 +48,7 @@ class TonerlisteControllerProvider
                 $request->get("color"),
                 $request->get("printer")
             );
-        })->assert('type', '((toner|drum)s?)')
+        })->assert('type', '(toner|drum)s')
           ->bind('');
 
         $controllers->post("/{type}/{id}/transactions", function(Request $request, $type, $id) use($app, $tonerliste) {
