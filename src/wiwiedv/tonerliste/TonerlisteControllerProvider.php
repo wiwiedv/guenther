@@ -49,7 +49,7 @@ class TonerlisteControllerProvider
                 $request->get("printer")
             );
         })->assert('type', '(toner|drum)s')
-          ->bind('');
+          ->bind('tonerliste_post_item');
 
         $controllers->post("/{type}/{id}/transactions", function(Request $request, $type, $id) use($app, $tonerliste) {
             return $tonerliste->newTransaction(

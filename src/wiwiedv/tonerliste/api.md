@@ -25,24 +25,24 @@
 ## Database Structure
 
 ### Table `items`
-    CREATE TABLE "items" (
-      "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-      "name" TEXT NOT NULL UNIQUE,
-      "type" INTEGER NOT NULL,
-      "color" INTEGER NOT NULL DEFAULT 1,
-      "printer" TEXT,
-      "stock" INTEGER NOT NULL DEFAULT 0,
-      "hidden" BOOL NOT NULL DEFAULT 0
+    CREATE TABLE `items` (
+      `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+      `name` TEXT NOT NULL UNIQUE,
+      `type` INTEGER NOT NULL,
+      `color` INTEGER NOT NULL,
+      `printer` TEXT NOT NULL,
+      `stock` INTEGER NOT NULL DEFAULT 0,
+      `hidden` INTEGER NOT NULL DEFAULT 0
     );
 
 ### Table `transactions`
-    CREATE TABLE "transactions" (
-      "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
-      "date" DATETIME NOT NULL,
-      "action" INTEGER NOT NULL,
-      "user" TEXT NOT NULL,
-      "item" INTEGER NOT NULL,
-      "reason" TEXT NOT NULL
+    CREATE TABLE `transactions` (
+      `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,
+      `date` INTEGER NOT NULL,
+      `action` INTEGER NOT NULL,
+      `user` TEXT NOT NULL,
+      `item` INTEGER NOT NULL,
+      `reason` TEXT NOT NULL
     );
 
 ## Exposed Data Structure
@@ -60,7 +60,7 @@ The `drum` is an `item`.
 The `item` represents either a `toner` or a `drum`. The data is structured as follows:
 
 * `id` _integer_, unique
-* `name` _string_, unique
+* `name` _string_,
 * `type` _integer_, see Enums
 * `color` _integer_, see Enums
 * `printer` _string_
@@ -96,76 +96,64 @@ The `transaction` represents a modification of an `item`. The data is structured
 
 Returns an array of all registered toners, drums or items
 
-##### Response Body
-
-* `200` Array of requested items
+* Response Body
+  * `200` Array of requested items
 
 #### Requesting `GET   /[toner|drum]/{id}`
 
 Returns a single toner or drum item, including its complete transaction history
 
-##### Response Header
+* Response Header
+  * `Location` The URL of the newly created resource, if response code was 201
 
-* `Location` The URL of the newly created resource, if response code was 201
-
-##### Response Body
-
-* `200` Requested item including its complete transaction history
-* `404` Error message
+* Response Body
+  * `200` Requested item including its complete transaction history
+  * `404` Error message
 
 #### Requesting `POST  /[toners|drums]`
 
 Creates a new toner or drum item, returns said item on success
 
-##### Request Body
+* Request Body  
+  A valid JSON object, containing the following fields:
+  * `name` _string_ The model name
+  * `color` _integer_ The item's color, see Enums
+  * `printer` _string_ The printer model to use this item in
 
-A valid JSON object, containing the following fields:
+* Response Header
+  * `Location` The URL of the newly created resource, if response code was 201
 
-* `name` _string_ The model name
-* `color` _integer_ The item's color, see Enums
-* `printer` _string_ The printer model to use this item in
-
-##### Response Header
-
-* `Location` The URL of the newly created resource, if response code was 201
-
-##### Response Body
-
-* `201` Newly created item
-* `400` Error message
-* `500` Error message
+* Response Body
+  * `201` Newly created item
+  * `400` Error message
+  * `500` Error message
 
 #### Requesting `POST  /[toner|drum]/{id}/transactions`
 
 Deposit or withdraw a toner or drum, i.e. increase or decrease stock by 1
 
-##### Request Body
+* Request Body  
+  A valid JSON object, containing the following fields:
+  * `action` _integer_ The transaction action, see Enums
+  * `reason` _string_ The reason for this transaction
 
-A valid JSON object, containing the following fields:
-
-* `action` _integer_ The transaction action, see Enums
-* `reason` _string_ The reason for this transaction
-
-##### Response Body
-
-* `204` Empty
-* `400` Error message
-* `403` Error message
-* `404` Error message
-* `409` Error message
-* `500` Error message
+* Response Body
+  * `204` Empty
+  * `400` Error message
+  * `403` Error message
+  * `404` Error message
+  * `409` Error message
+  * `500` Error message
 
 #### Requesting `PUT   /[toner|drum]/{id}`
 
 Update a single item
 
-##### Request Body
+* Request Body  
+  A valid JSON object, containing a complete item
 
-A valid JSON object, containing a complete item
-
-##### Response Body
-
-* `200` Updated item
-* `400` Error message
-* `404` Error message
-* `500` Error message
+* Response Body
+  * `200` Updated item
+  * `400` Error message
+  * `404` Error message
+  * `500` Error message

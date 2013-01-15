@@ -74,11 +74,14 @@ class Tonerliste
             }
         }
 
-        if ($this->db()->insert("items", $newItemData) !== 1) {
-            return new GuentherResponse("Could not persist new item", 500);
+        try {
+            if ($this->db()->insert("items", $newItemData) !== 1) {
+                return new GuentherResponse("Could not persist new item", 500);
+            }
+            $id = intval($this->db()->lastInsertId());
+        } catch (\PDOException $e) {
+            return new GuentherResponse("Database error: " . $e->getMessage(), 500);
         }
-
-        $id = intval($this->db()->lastInsertId());
 
         $transaction = $this->storeTransaction($id, "create", "new");
         if ($transaction instanceof GuentherResponse) {
@@ -130,8 +133,12 @@ class Tonerliste
             $item['printer'] = $printer;
             $item['hidden'] = $hidden;
             $item['color'] = $color;
-            if (!$this->db()->update('items', $item, ['id' => $id])) {
-                return new GuentherResponse("Could not store data", 500);
+            try {
+                if (!$this->db()->update('items', $item, ['id' => $id])) {
+                    return new GuentherResponse("Could not store data", 500);
+                }
+            } catch (\PDOException $e) {
+                return new GuentherResponse("Database error: " . $e->getMessage(), 500);
             }
             $transaction = $this->storeTransaction($id, "modify", "change");
             if ($transaction instanceof GuentherResponse) {
@@ -201,7 +208,11 @@ class Tonerliste
                 return new GuentherResponse("Toner out of stock", 409);
             }
             $newStock = $item['stock'] + ($action == $this->actions['deposit'] ? 1 : -1);
-            $res = $res && $this->db()->update('item', ['stock' => $newStock], ['id' => $item['id']]);
+            try {
+                $res = $res && $this->db()->update('item', ['stock' => $newStock], ['id' => $item['id']]);
+            } catch (\PDOException $e) {
+                return new GuentherResponse("Database error: " . $e->getMessage(), 500);
+            }
         }
 
         $newTransactionData = [
@@ -211,7 +222,11 @@ class Tonerliste
             'item'   => $item,
             'reason' => $reason
         ];
-        $res = $res && $this->db()->insert('transactions', $newTransactionData);
+        try {
+            $res = $res && $this->db()->insert('transactions', $newTransactionData);
+        } catch (\PDOException $e) {
+            return new GuentherResponse("Database error: " . $e->getMessage(), 500);
+        }
 
         return $res;
     }
@@ -221,7 +236,11 @@ class Tonerliste
      * @return array
      */
     private function fetchTransactionsForItem($id) {
-        return $this->db()->fetchAll("SELECT * FROM `transactions` WHERE `item` = ?", array($id));
+        try {
+            return $this->db()->fetchAll("SELECT * FROM `transactions` WHERE `item` = ?", array($id));
+        } catch (\PDOException $e) {
+            return new GuentherResponse("Database error: " . $e->getMessage(), 500);
+        }
     }
 
     /**
@@ -236,7 +255,7 @@ class Tonerliste
 
         $itemType = $this->normalizeItemType($itemType);
 
-        if (!empty($id) || !empty($itemType)) {
+        if (!(empty($itemType) && empty($id))) {
             $sql .= " WHERE 1=1";
 
             if (!empty($id)) {
@@ -244,16 +263,20 @@ class Tonerliste
                 $params[] = $id;
             }
 
-            if (!empty($id)) {
+            if (!empty($itemType)) {
                 $sql .= " AND `type` = ?";
                 $params[] = $itemType;
             }
         }
 
-        if ($fetchAll) {
-            return $this->db()->fetchAll($sql, $params);
-        } else {
-            return $this->db()->fetchAssoc($sql, $params);
+        try {
+            if ($fetchAll) {
+                return $this->db()->fetchAll($sql, $params);
+            } else {
+                return $this->db()->fetchAssoc($sql, $params);
+            }
+        } catch (\PDOException $e) {
+            return new GuentherResponse("Database error: " . $e->getMessage(), 500);
         }
     }
 
