@@ -183,10 +183,10 @@ class Tonerliste
      * @param $reason
      * @return bool|\wiwiedv\GuentherResponse
      */
-    private function storeTransaction($item, $action, $reason) {
+    private function storeTransaction($id, $action, $reason) {
         $action = $this->normalizeAction($action);
         $validitySettings = [
-            'item'   => self::VALID_NUMBER,
+            'id'     => self::VALID_NUMBER,
             'action' => self::VALID_NUMBER,
             'reason' => self::VALID_STRING
         ];
@@ -196,7 +196,7 @@ class Tonerliste
             }
         }
 
-        $item = $this->fetchFromItems($item, null, false);
+        $item = $this->fetchFromItems($id, null, false);
         if (!$item) {
             return new GuentherResponse("Item not found", 404);
         }
@@ -221,7 +221,7 @@ class Tonerliste
             'date'   => time(),
             'action' => $action,
             'user'   => $this->getUser(),
-            'item'   => $item,
+            'item'   => $item['id'],
             'reason' => $reason
         ];
         try {
