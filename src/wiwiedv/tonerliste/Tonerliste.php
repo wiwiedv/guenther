@@ -206,7 +206,7 @@ class Tonerliste
         if ($action == $this->actions['deposit'] ||
             $action == $this->actions['withdraw']) {
 
-            if ($item['stock'] < 1) {
+            if ($item['stock'] < 1 && $action == $this->actions['withdraw']) {
                 return new GuentherResponse("Toner out of stock", 409);
             }
             $newStock = $item['stock'] + ($action == $this->actions['deposit'] ? 1 : -1);
