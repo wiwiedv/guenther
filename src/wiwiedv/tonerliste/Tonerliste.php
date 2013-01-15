@@ -211,7 +211,7 @@ class Tonerliste
             }
             $newStock = $item['stock'] + ($action == $this->actions['deposit'] ? 1 : -1);
             try {
-                $res = $res && $this->db()->update('item', ['stock' => $newStock], ['id' => $item['id']]);
+                $res = $res && $this->db()->update('items', ['stock' => $newStock], ['id' => $item['id']]);
             } catch (\PDOException $e) {
                 return new GuentherResponse("Database error: " . $e->getMessage(), 500);
             }
