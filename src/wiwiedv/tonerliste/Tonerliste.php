@@ -92,8 +92,10 @@ class Tonerliste
 
         $response = $this->getItem($id, $type);
         if ($response->getStatusCode() == 200) {
+            $newLocation = $this->generateUrl("tonerliste_get_item",
+                                              ['id' => $id, 'type' => array_flip($this->itemTypes)[$type]]);
             $response->setStatusCode(201)
-                     ->headers->add(['Location' => $this->generateUrl("tonerliste_get_item", ['id' => $id, 'type' => $type])]);
+                     ->headers->add(['Location' => $newLocation]);
         }
         return $response;
     }
