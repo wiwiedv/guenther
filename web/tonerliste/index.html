@@ -17,6 +17,7 @@
 
   <div class="container"> 
     <h1>Tonerliste</h1>
+     
     <div class="error"></div>
     <div class="page">
       <div class="toners"></div>
@@ -74,7 +75,7 @@
               <td><%- toner.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#/toner/<%- toner.id %>/transaction/2" class="btn  btn-small"><i class="icon-minus icon"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<input type='text' class='input-mini' placeholder='Grund...' ></input><a class='button' href='#/toner/<%- toner.id %>/transaction/1'>Speichern</a>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
                   <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                   <a href="#/toner/<%- toner.id %>/transaction/1" class="btn btn-small"><i class="icon-plus"></i></a>
                 </div>
@@ -127,7 +128,6 @@
     </div>
   </script>
 
-
   <script type="text/javascript">
 
     var Toners = Backbone.Collection.extend({
@@ -147,6 +147,7 @@
           success: function(toners){ 
             var template = _.template($('#toners-template').html(), {toners: toners.models, visibility: visibility});
             that.$el.html(template);
+            $('[id^=popover]').popover({ html : true });
           },
           error: function(){
             var template = _.template($('#error-template').html(), {error: 'Request GET error in /api/tonerliste/toners'});
