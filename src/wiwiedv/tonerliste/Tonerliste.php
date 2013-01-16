@@ -110,7 +110,6 @@ class Tonerliste
      * @return \wiwiedv\GuentherResponse
      */
     public function modifyItem($id, $name, $color, $printer, $hidden, $type = null) {
-        $hidden = !!$hidden;
         $type = $this->normalizeItemType($type);
         $color = $this->normalizeColor($color);
         $validitySettings = [
@@ -118,7 +117,7 @@ class Tonerliste
             'name'    => self::VALID_STRING,
             'printer' => self::VALID_STRING,
             'color'   => self::VALID_NUMBER,
-            'hidden'  => [true, false],
+            'hidden'  => self::VALID_NUMBER,
             'type'    => self::VALID_NUMBER
         ];
         foreach ($validitySettings as $argname => $target) {
