@@ -75,9 +75,9 @@
               <td><%- toner.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<input type='text' class='input-mini' placeholder='Grund...' ></input><a class='button' href='#/toner/<%- toner.id %>/transaction/1'>Speichern</a>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/toner/<%- toner.id %>/transaction/1'>Speichern</a></form>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
                   <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#/toner/<%- toner.id %>/transaction/1" class="btn btn-small"><i class="icon-plus"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/toner/<%- toner.id %>/transaction/2'>Speichern</a></form>" data-original-title="Tonerbestand um 1 erhöhen"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
@@ -116,9 +116,9 @@
               <td><%- drum.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#/stock/<%- drum.id %>/2" class="btn  btn-small"><i class="icon-minus icon"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -drum.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/drum/<%- drum.id %>/transaction/1'>Speichern</a></form>" data-original-title="Trommelbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
                   <a href="#/edit/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#/stock/<%- drum.id %>/1" class="btn btn-small"><i class="icon-plus"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -drum.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/drum/<%- drum.id %>/transaction/2'>Speichern</a></form>" data-original-title="Trommelbestand um 1 erhöhen"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
@@ -166,6 +166,7 @@
           success: function(drums){ 
             var template = _.template($('#drums-template').html(), {drums: drums.models, visibility: visibility});
             that.$el.html(template);
+            $('[id^=popover]').popover({ html : true });
           },
           error: function(){
             var template = _.template($('#error-template').html(), {error: 'Request GET error in /api/tonerliste/drums'});
@@ -182,7 +183,7 @@
       routes: {
         '': 'home-hidden',
         'all': 'home-visible',
-        'toner/:id/transaction/:action': 'tonerstock',
+        ':type/:id/transaction/:action': 'stock',
       }
     });
 
@@ -199,6 +200,10 @@
     router.on('route:home-visible', function(){
       tonerList.render(1);
       drumList.render(1);
+    });
+
+    router.on('route:stock', function(){
+      console.log('hallo');
     });
 
     Backbone.history.start();
