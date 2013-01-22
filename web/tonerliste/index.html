@@ -41,7 +41,13 @@
     </div>   
   </script>
 
-  <script type="text/template" id="toners-template">     
+  <script type="text/javascript">    
+    function editStock(input, type, action){
+      console.log(input);
+    }
+  </script>
+
+  <script type="text/template" id="toners-template">   
     <p><% if(visibility==0){ %>
     <a href="#all" class="btn btn-info btn-mini"><i class="icon-eye-open icon-white"></i> Versteckte Einblenden</a></p>
     <% }else{ %>
@@ -56,10 +62,19 @@
             <th>Modell</th>
             <th>Farbe</th>
             <th>Anzahl</th>
-            <th><a href="#new" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
+            <th><a href="#new/toner" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
           </tr>
         </thead>
         <tobdy>
+          <% if(generate){  %>
+          <tr>
+            <td><input id='printer' type='text' class='input-small' placeholder='Drucker...'></input></td>
+            <td><input id='name' type='text' class='input-small' placeholder='Name...'></input></td>
+            <td>Gesperrt</td>
+            <td>Gesperrt</td>         
+            <td><a href='#new/toner/send' class='btn btn-small btn-success'>Speichern</a></td>
+          </tr>
+          <% } %>
           <% _.each(toners, function(toner){ %>
           <% if(toner.get('hidden')==0||visibility==1){ %>
             <tr class="<%- toner.get('stock')>0&&toner.get('stock')<3 ? 'warning' :'' %>
@@ -75,7 +90,7 @@
               <td><%- toner.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/toner/<%- toner.id %>/transaction/1'>Speichern</a></form>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
+                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input id='<%- 'reasonminus' + toner.id %>' type='text' class='input-small' placeholder='Grund...' ></input><button class='btn btn-success' '>Speichern</a></button>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
                   <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                   <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input id='<%- 'reasonplus' + toner.id %>' type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' <% var elem = 'reasonplus' + toner.id %> href='#/toner/<%- toner.id %>/transaction/2/'>Speichern</a><% %></form>" data-original-title="Tonerbestand um 1 erhöhen"><i class="icon-plus"></i></a>
                 </div>
@@ -97,7 +112,7 @@
             <th>Modell</th>
             <th>Farbe</th>
             <th>Anzahl</th>
-            <th><a href="#new" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neue Trommel</a></th>
+            <th><a href="#new/drum" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neue Trommel</a></th>
           </tr>
         </thead>
         <tobdy>
@@ -128,6 +143,7 @@
     </div>
   </script>
 
+
   <script type="text/javascript">
 
     var Toners = Backbone.Collection.extend({
@@ -140,12 +156,12 @@
 
     var TonerList = Backbone.View.extend({
       el: '.toners',
-      render : function(visibility) {
+      render : function(visibility, generate) {
         var that = this;
         var toners = new Toners();
         toners.fetch({
           success: function(toners){ 
-            var template = _.template($('#toners-template').html(), {toners: toners.models, visibility: visibility});
+            var template = _.template($('#toners-template').html(), {toners: toners.models, visibility: visibility, generate: generate});
             that.$el.html(template);
             $('[id^=popover]').popover({ html : true });
           },
@@ -182,6 +198,7 @@
     var Router = Backbone.Router.extend({
       routes: {
         '': 'home-hidden',
+        'new/toner': 'newtoner',
         'all': 'home-visible',
         ':type/:id/transaction/:action': 'stock',
       }
@@ -193,17 +210,18 @@
     var router = new Router;
 
     router.on('route:home-hidden', function(){
-      tonerList.render(0);
-      drumList.render(0);
+      tonerList.render(0,0);
+      drumList.render(0,0);
     });
 
     router.on('route:home-visible', function(){
-      tonerList.render(1);
-      drumList.render(1);
+      tonerList.render(1,0);
+      drumList.render(1,0);
     });
 
-    router.on('route:stock', function(){
-      //console.log('hallo');
+    router.on('route:newtoner', function(){
+      tonerList.render(0,1);
+      drumList.render(0,0);
     });
 
     Backbone.history.start();
