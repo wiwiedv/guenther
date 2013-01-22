@@ -22,6 +22,7 @@
     <div class="page">
       <div class="toners"></div>
       <div class="drums"></div>
+      <div class="items"></div>
     </div>
     
   </div>
@@ -32,27 +33,7 @@
   <script src="../lib/js/underscore-min.js" type="text/javascript"></script>
   <script src="../lib/js/backbone-min.js" type="text/javascript"></script>
 
-
-
-  <script type="text/template" id="error-template">    
-    <div class="alert alert-error">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Fehler!</strong> <%- error %>
-    </div>   
-  </script>
-
-  <script type="text/javascript">    
-    function editStock(input, type, action){
-      console.log(input);
-    }
-  </script>
-
   <script type="text/template" id="toners-template">   
-    <p><% if(visibility==0){ %>
-    <a href="#all" class="btn btn-info btn-mini"><i class="icon-eye-open icon-white"></i> Versteckte Einblenden</a></p>
-    <% }else{ %>
-    <a href="#" class="btn btn-info btn-mini"><i class="icon-eye-close icon-white"></i> Versteckte Ausblenden</a></p>
-    <% } %>
     <span class="label label-inverse">Toner</span>
     <div class="well-box">
       <table class="table table-hover table-condensed">
@@ -62,23 +43,12 @@
             <th>Modell</th>
             <th>Farbe</th>
             <th>Anzahl</th>
-            <th><a href="#new/toner" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
+            <th><a href="#new" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
           </tr>
         </thead>
         <tobdy>
-          <% if(generate){  %>
-          <tr>
-            <td><input id='printer' type='text' class='input-small' placeholder='Drucker...'></input></td>
-            <td><input id='name' type='text' class='input-small' placeholder='Name...'></input></td>
-            <td>Gesperrt</td>
-            <td>Gesperrt</td>         
-            <td><a href='#new/toner/send' class='btn btn-small btn-success'>Speichern</a></td>
-          </tr>
-          <% } %>
           <% _.each(toners, function(toner){ %>
-          <% if(toner.get('hidden')==0||visibility==1){ %>
-            <tr class="<%- toner.get('stock')>0&&toner.get('stock')<3 ? 'warning' :'' %>
-            <%- toner.get('stock')==0 ? 'error' : '' %>">
+            <tr>
               <td><%- toner.get('printer') %></td>
               <td><%- toner.get('name') %></td>
               <td><%  var color = toner.get('color')%>
@@ -90,17 +60,17 @@
               <td><%- toner.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input id='<%- 'reasonminus' + toner.id %>' type='text' class='input-small' placeholder='Grund...' ></input><button class='btn btn-success' '>Speichern</a></button>" data-original-title="Tonerbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
+                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
                   <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#" class="btn btn-small" id="popover<% -toner.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input id='<%- 'reasonplus' + toner.id %>' type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' <% var elem = 'reasonplus' + toner.id %> href='#/toner/<%- toner.id %>/transaction/2/'>Speichern</a><% %></form>" data-original-title="Tonerbestand um 1 erhöhen"><i class="icon-plus"></i></a>
+                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
-          <% }}); %>
+          <% }); %>
         </tbody>
       <tables>
     </div>
-  </script>
+  </script>  
 
   <script type="text/template" id="drums-template">    
     <span class="label label-inverse">Trommeln</span>
@@ -117,9 +87,7 @@
         </thead>
         <tobdy>
           <% _.each(drums, function(drum){ %>
-          <% if(drum.get('hidden')==0||visibility==1){ %>
-            <tr class="<%- drum.get('stock')>0&&drum.get('stock')<3 ? 'warning' :'' %>
-            <%- drum.get('stock')==0 ? 'error' : '' %>">
+            <tr>
               <td><%- drum.get('printer') %></td>
               <td><%- drum.get('name') %></td>
               <td><%  var color = drum.get('color')%>
@@ -131,20 +99,82 @@
               <td><%- drum.get('stock') %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#" class="btn btn-small" id="popover<% -drum.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/drum/<%- drum.id %>/transaction/1'>Speichern</a></form>" data-original-title="Trommelbestand um 1 erniedrigen"><i class="icon-minus icon"></i></a>
+                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
                   <a href="#/edit/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#" class="btn btn-small" id="popover<% -drum.id %>" rel="popover" data-placement="left" data-content="<form class='input-append'><input type='text' class='input-small' placeholder='Grund...' ></input><a class='btn btn-success' href='#/drum/<%- drum.id %>/transaction/2'>Speichern</a></form>" data-original-title="Trommelbestand um 1 erhöhen"><i class="icon-plus"></i></a>
+                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
-          <% }}); %>
+          <% }); %>
         </tbody>
       <tables>
     </div>
   </script>
 
 
-  <script type="text/javascript">
+  <script type="text/template" id="items-template">   
+    <span class="label label-inverse">Ausgeblendet</span>
+    <div class="well-box">
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Typ</th>
+            <th>Drucker</th>
+            <th>Modell</th>
+            <th>Farbe</th>
+            <th>Anzahl</th>
+            <th></th>
+        </thead>
+        <tobdy>
+        <% console.log(toners) %>
+          <% _.each(toners, function(toner){ %>
+            <tr>
+              <td>Toner</td>
+              <td><%- toner.get('printer') %></td>
+              <td><%- toner.get('name') %></td>
+              <td><%  var color = toner.get('color')%>
+              <%- color==1 ? 'black' : '' %>
+              <%- color==2 ? 'magenta' : '' %>
+              <%- color==3 ? 'cyan' : '' %>
+              <%- color==4 ? 'yellow' : '' %>
+              <%- color==5 ? 'universal' : '' %></td>
+              <td><%- toner.get('stock') %></td>
+              <td>
+                <div class="btn-group">
+                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
+                  <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
+                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+          <% _.each(drums, function(drum){ %>
+            <tr>
+              <td>Trommel</td>
+              <td><%- drum.get('printer') %></td>
+              <td><%- drum.get('name') %></td>
+              <td><%  var color = drum.get('color')%>
+              <%- color==1 ? 'black' : '' %>
+              <%- color==2 ? 'magenta' : '' %>
+              <%- color==3 ? 'cyan' : '' %>
+              <%- color==4 ? 'yellow' : '' %>
+              <%- color==5 ? 'universal' : '' %></td>
+              <td><%- drum.get('stock') %></td>
+              <td>
+                <div class="btn-group">
+                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
+                  <a href="#/edit/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
+                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      <tables>
+    </div>
+  </script>
+
+  <script>
 
     var Toners = Backbone.Collection.extend({
       url: '/api/tonerliste/toners'
@@ -156,76 +186,71 @@
 
     var TonerList = Backbone.View.extend({
       el: '.toners',
-      render : function(visibility, generate) {
+      render : function() {
         var that = this;
         var toners = new Toners();
         toners.fetch({
           success: function(toners){ 
-            var template = _.template($('#toners-template').html(), {toners: toners.models, visibility: visibility, generate: generate});
+            var template = _.template($('#toners-template').html(), {toners: toners.models});
             that.$el.html(template);
-            $('[id^=popover]').popover({ html : true });
           },
-          error: function(){
-            var template = _.template($('#error-template').html(), {error: 'Request GET error in /api/tonerliste/toners'});
-            that.$el.html(template);
-          }
+          error: function(){}
         });
       }
     });
 
     var DrumList = Backbone.View.extend({
       el: '.drums',
-      render : function(visibility) {
+      render : function() {
         var that = this;
         var drums = new Drums();
         drums.fetch({
           success: function(drums){ 
-            var template = _.template($('#drums-template').html(), {drums: drums.models, visibility: visibility});
+            var template = _.template($('#drums-template').html(), {drums: drums.models});
             that.$el.html(template);
-            $('[id^=popover]').popover({ html : true });
           },
-          error: function(){
-            var template = _.template($('#error-template').html(), {error: 'Request GET error in /api/tonerliste/drums'});
-            that.$el.html(template);
-          }
+          error: function(){}
         });
       }
     });
 
+    var ItemList = Backbone.View.extend({
+      el: '.items',
+      render : function() {
+        var that = this;
+        var toners = new Toners();
+        var drums = new Drums();
+        $.when(toners.fetch(),drums.fetch()).done(function(toners, drums){
+            var template = _.template($('#items-template').html(), {toners: toners.models, drums: drums.models});
+            that.$el.html(template);
+        });     
+      }
+    });
 
 
 
     var Router = Backbone.Router.extend({
       routes: {
-        '': 'home-hidden',
-        'new/toner': 'newtoner',
-        'all': 'home-visible',
-        ':type/:id/transaction/:action': 'stock',
+        '': 'home',
       }
     });
 
     var tonerList = new TonerList();
     var drumList = new DrumList();
+    var itemList = new ItemList();
 
-    var router = new Router;
+    var router = new Router;    
 
-    router.on('route:home-hidden', function(){
-      tonerList.render(0,0);
-      drumList.render(0,0);
-    });
-
-    router.on('route:home-visible', function(){
-      tonerList.render(1,0);
-      drumList.render(1,0);
-    });
-
-    router.on('route:newtoner', function(){
-      tonerList.render(0,1);
-      drumList.render(0,0);
+    router.on('route:home', function(){
+      tonerList.render();
+      drumList.render();
+      itemList.render();
     });
 
     Backbone.history.start();
+
   </script>
+
 
 
 </body>
