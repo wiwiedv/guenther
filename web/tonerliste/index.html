@@ -39,11 +39,11 @@
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th>Drucker</th>
-            <th>Modell</th>
-            <th>Farbe</th>
-            <th>Anzahl</th>
-            <th><a href="#new/toner" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
+            <th width="20%">Drucker</th>
+            <th width="20%">Modell</th>
+            <th width="20%">Farbe</th>
+            <th width="20%">Anzahl</th>
+            <th width="20%"><a href="#new/toner" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
           </tr>
         </thead>
         <tobdy>
@@ -79,11 +79,11 @@
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th>Drucker</th>
-            <th>Modell</th>
-            <th>Farbe</th>
-            <th>Anzahl</th>
-            <th><a href="#new/drum" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neue Trommel</a></th>
+            <th width="20%">Drucker</th>
+            <th width="20%">Modell</th>
+            <th width="20%">Farbe</th>
+            <th width="20%">Anzahl</th>
+            <th width="20%"><a href="#new/drum" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neue Trommel</a></th>
           </tr>
         </thead>
         <tobdy>
@@ -120,11 +120,11 @@
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th>Typ</th>
-            <th>Drucker</th>
-            <th>Modell</th>
-            <th>Farbe</th>
-            <th></th>
+            <th width="20%">Typ</th>
+            <th width="20%">Drucker</th>
+            <th width="20%">Modell</th>
+            <th width="20%">Farbe</th>
+            <th width="20%"></th>
           </tr>
         </thead>
         <tobdy>
@@ -214,33 +214,65 @@
   </script>
 
   <script type="text/template" id="edit-toner-template">
-    <form class="edit-toner-form">
-      <legend>Toner Details</legend>
-        <label>Drucker</label>
-        <input name="printer" type="text" value=<%- toner.get('printer') %>>
-        <label>Modellname</label>
-        <input name="name" type="text" value=<%- toner.get('name') %>>
-        <label>Farbe</label>
-        <select name="color">
-          <option <%- toner.get('color')==1 ? 'selected' : '' %>>Schwarz</option>
-          <option <%- toner.get('color')==2 ? 'selected' : '' %>>Magenta</option>
-          <option <%- toner.get('color')==3 ? 'selected' : '' %>>Cyan</option>
-          <option <%- toner.get('color')==4 ? 'selected' : '' %>>Gelb</option>
-          <option <%- toner.get('color')==5 ? 'selected' : '' %>>Universal</option>
-        </select>
-        <label>Sichbarkeit</label>
-        <select name="hidden">
-          <option <%- toner.get('hidden')==1 ? 'selected' : '' %>>Sichtbar</option>
-          <option <%- toner.get('hidden')==2 ? 'selected' : '' %>>Versteckt</option>
-        </select>
-        </br></br>
-      <input type="hidden" name="id" value="<%- toner.get('id') %>" />
-       <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
-    </form>
+      <div class="span3">
+        <form class="edit-toner-form">
+          <legend>Toner Details</legend>
+            <label>Drucker</label>
+            <input name="printer" type="text" value=<%- toner.get('printer') %>>
+            <label>Modellname</label>
+            <input name="name" type="text" value=<%- toner.get('name') %>>
+            <label>Farbe</label>
+            <select name="color">
+              <option <%- toner.get('color')==1 ? 'selected' : '' %>>Schwarz</option>
+              <option <%- toner.get('color')==2 ? 'selected' : '' %>>Magenta</option>
+              <option <%- toner.get('color')==3 ? 'selected' : '' %>>Cyan</option>
+              <option <%- toner.get('color')==4 ? 'selected' : '' %>>Gelb</option>
+              <option <%- toner.get('color')==5 ? 'selected' : '' %>>Universal</option>
+            </select>
+            <label>Sichbarkeit</label>
+            <select name="hidden">
+              <option <%- toner.get('hidden')==1 ? 'selected' : '' %>>Sichtbar</option>
+              <option <%- toner.get('hidden')==2 ? 'selected' : '' %>>Versteckt</option>
+            </select>
+            </br></br>
+          <input type="hidden" name="id" value="<%- toner.get('id') %>" />
+           <button type="submit" class="btn btn-success">Speichern</button>
+           <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+        </form>
+        </div>
+        <div class="span7">
+          <legend>Transaktionen</legend>
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Aktion</th>
+                <th>Benutzer</th>
+                <th>Grund</th>
+              </tr>
+            </thead>
+            <tobdy>
+            <% _.each(transaction, function(trans){ %>
+            <% var time = new Date(trans.date*1000) %>
+              <tr>
+                <td><%- time.getUTCDate() + '.' + time.getUTCMonth()+1  + '.' + time.getUTCFullYear() %></td>
+                <td>
+                <%- (trans.action==1) ? 'Stückzahl erhöht' : '' %>
+                <%- (trans.action==2) ? 'Stückzahl verringert' : '' %>
+                <%- (trans.action==3) ? 'Erstellt' : '' %>
+                <%- (trans.action==4) ? 'Bearbeitet' : '' %>
+                </td>
+                <td><%- trans.user %></td>
+                <td><%- trans.reason %></td>
+              </tr>
+            <% }); %>
+            </tbody>
+          </table>
+        </div>
   </script>
 
    <script type="text/template" id="edit-drum-template">
+    <div class="span3">
     <form class="edit-drum-form">
       <legend>Trommel Details</legend>
         <label>Drucker</label>
@@ -265,6 +297,36 @@
        <button type="submit" class="btn btn-success">Speichern</button>
        <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
     </form>
+    </div>
+    <div class="span7">
+          <legend>Transaktionen</legend>
+          <table class="table table-hover table-condensed">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Aktion</th>
+                <th>Benutzer</th>
+                <th>Grund</th>
+              </tr>
+            </thead>
+            <tobdy>
+            <% _.each(transaction, function(trans){ %>
+            <% var time = new Date(trans.date*1000) %>
+              <tr>
+                <td><%- time.getUTCDate() + '.' + time.getUTCMonth()+1  + '.' + time.getUTCFullYear() %></td>
+                <td>
+                <%- (trans.action==1) ? 'Stückzahl erhöht' : '' %>
+                <%- (trans.action==2) ? 'Stückzahl verringert' : '' %>
+                <%- (trans.action==3) ? 'Erstellt' : '' %>
+                <%- (trans.action==4) ? 'Bearbeitet' : '' %>
+                </td>
+                <td><%- trans.user %></td>
+                <td><%- trans.reason %></td>
+              </tr>
+            <% }); %>
+            </tbody>
+          </table>
+        </div>
   </script>
 
   <script>
@@ -451,11 +513,16 @@
       },
       render: function (tonerid) {
         var that = this;  
-        this.toner = new TonerInstance({id: tonerid.id});
-        this.toner.fetch({
-          success: function(toner){      
-            var template = _.template($('#edit-toner-template').html(), {toner: toner});
-            that.$el.html(template);
+        var toner = new TonerInstance({id: tonerid.id});
+        var transaction = new TonerInstance({id: tonerid.id});
+        toner.fetch({
+          success: function(){ 
+            transaction.fetch({
+              success: function(){  
+                var template = _.template($('#edit-toner-template').html(), {toner: toner, transaction: transaction.get('transactions')});
+                that.$el.html(template);
+              }
+            });
           }
         });
       }
@@ -494,11 +561,16 @@
       },
       render: function (drumid) {      
         var that = this;  
-        this.drum = new DrumInstance({id: drumid.id});
-        this.drum.fetch({
-          success: function(drum){      
-            var template = _.template($('#edit-drum-template').html(), {drum: drum});
-            that.$el.html(template);
+        var drum = new DrumInstance({id: drumid.id});
+        var transaction = new DrumInstance({id: drumid.id});
+        drum.fetch({
+          success: function(){
+             transaction.fetch({
+              success: function(){
+                var template = _.template($('#edit-drum-template').html(), {drum: drum, transaction: transaction.get('transactions')});
+                that.$el.html(template);
+              }
+            });
           }
         });
       }
