@@ -43,30 +43,31 @@
             <th>Modell</th>
             <th>Farbe</th>
             <th>Anzahl</th>
-            <th><a href="#new" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
+            <th><a href="#new/toner" class="btn btn-small btn-primary"><i class="icon-plus icon-white"></i> Neuen Toner</a></th>
           </tr>
         </thead>
         <tobdy>
           <% _.each(toners, function(toner){ %>
+          <% if(toner.get('hidden')==0){ %>
             <tr>
               <td><%- toner.get('printer') %></td>
               <td><%- toner.get('name') %></td>
               <td><%  var color = toner.get('color')%>
-              <%- color==1 ? 'black' : '' %>
-              <%- color==2 ? 'magenta' : '' %>
-              <%- color==3 ? 'cyan' : '' %>
-              <%- color==4 ? 'yellow' : '' %>
-              <%- color==5 ? 'universal' : '' %></td>
+              <%- color==1 ? 'Schwarz' : '' %>
+              <%- color==2 ? 'Magenta' : '' %>
+              <%- color==3 ? 'Cyan' : '' %>
+              <%- color==4 ? 'Gelb' : '' %>
+              <%- color==5 ? 'Universal' : '' %></td>
               <td><%- toner.get('stock') %></td>
               <td>
                 <div class="btn-group">
                   <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
-                  <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
+                  <a href="#/edit/toner/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                   <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
-          <% }); %>
+          <% }}); %>
         </tbody>
       <tables>
     </div>
@@ -87,25 +88,26 @@
         </thead>
         <tobdy>
           <% _.each(drums, function(drum){ %>
+          <% if(drum.get('hidden')==0){ %>
             <tr>
               <td><%- drum.get('printer') %></td>
               <td><%- drum.get('name') %></td>
               <td><%  var color = drum.get('color')%>
-              <%- color==1 ? 'black' : '' %>
-              <%- color==2 ? 'magenta' : '' %>
-              <%- color==3 ? 'cyan' : '' %>
-              <%- color==4 ? 'yellow' : '' %>
-              <%- color==5 ? 'universal' : '' %></td>
+              <%- color==1 ? 'Schwarz' : '' %>
+              <%- color==2 ? 'Magenta' : '' %>
+              <%- color==3 ? 'Cyan' : '' %>
+              <%- color==4 ? 'Gelb' : '' %>
+              <%- color==5 ? 'Universal' : '' %></td>
               <td><%- drum.get('stock') %></td>
               <td>
                 <div class="btn-group">
                   <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
-                  <a href="#/edit/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
+                  <a href="#/edit/drum/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                   <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
                 </div>
               </td>
             </tr>
-          <% }); %>
+          <% }}); %>
         </tbody>
       <tables>
     </div>
@@ -122,59 +124,182 @@
             <th>Drucker</th>
             <th>Modell</th>
             <th>Farbe</th>
-            <th>Anzahl</th>
             <th></th>
+          </tr>
         </thead>
         <tobdy>
-        <% console.log(toners) %>
           <% _.each(toners, function(toner){ %>
+          <% if(toner.get('hidden')==1){ %>
             <tr>
               <td>Toner</td>
               <td><%- toner.get('printer') %></td>
               <td><%- toner.get('name') %></td>
               <td><%  var color = toner.get('color')%>
-              <%- color==1 ? 'black' : '' %>
-              <%- color==2 ? 'magenta' : '' %>
-              <%- color==3 ? 'cyan' : '' %>
-              <%- color==4 ? 'yellow' : '' %>
-              <%- color==5 ? 'universal' : '' %></td>
-              <td><%- toner.get('stock') %></td>
+              <%- color==1 ? 'Schwarz' : '' %>
+              <%- color==2 ? 'Magenta' : '' %>
+              <%- color==3 ? 'Cyan' : '' %>
+              <%- color==4 ? 'Gelb' : '' %>
+              <%- color==5 ? 'Universal' : '' %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
-                  <a href="#/edit/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
+                  <a href="#/edit/toner/<%- toner.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                 </div>
               </td>
             </tr>
-          <% }); %>
+          <% }}); %>
           <% _.each(drums, function(drum){ %>
+          <% if(drum.get('hidden')==1){ %>
             <tr>
               <td>Trommel</td>
               <td><%- drum.get('printer') %></td>
               <td><%- drum.get('name') %></td>
               <td><%  var color = drum.get('color')%>
-              <%- color==1 ? 'black' : '' %>
-              <%- color==2 ? 'magenta' : '' %>
-              <%- color==3 ? 'cyan' : '' %>
-              <%- color==4 ? 'yellow' : '' %>
-              <%- color==5 ? 'universal' : '' %></td>
-              <td><%- drum.get('stock') %></td>
+              <%- color==1 ? 'Schwarz' : '' %>
+              <%- color==2 ? 'Magenta' : '' %>
+              <%- color==3 ? 'Cyan' : '' %>
+              <%- color==4 ? 'Gelb' : '' %>
+              <%- color==5 ? 'Universal' : '' %></td>
               <td>
                 <div class="btn-group">
-                  <a href="#minus" class="btn btn-small"><i class="icon-minus"></i></a>
-                  <a href="#/edit/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
-                  <a href="#plus" class="btn btn-small"><i class="icon-plus"></i></a>
+                  <a href="#/edit/drum/<%- drum.id %>" class="btn btn-small btn-inverse"><i class="icon-edit icon-white"></i> Details</a>
                 </div>
               </td>
             </tr>
-          <% }); %>
+          <% }}); %>
         </tbody>
       <tables>
     </div>
   </script>
 
+  <script type="text/template" id="new-toner-template">
+    <form class="new-toner-form">
+      <legend>Neuen Toner hinzufügen</legend>
+        <label>Drucker</label>
+        <input name="printer" type="text">
+        <label>Modellname</label>
+        <input name="name" type="text">
+        <label>Farbe</label>
+        <select name="color">
+          <option>Schwarz</option>
+          <option>Magenta</option>
+          <option>Cyan</option>
+          <option>Gelb</option>
+          <option>Universal</option>
+        </select>
+        </br></br>
+       <button type="submit" class="btn btn-success">Speichern</button>
+       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+    </form>
+  </script>
+
+  <script type="text/template" id="new-drum-template">
+    <form class="new-drum-form">
+      <legend>Neue Trommel hinzufügen</legend>
+        <label>Drucker</label>
+        <input name="printer" type="text">
+        <label>Modellname</label>
+        <input name="name" type="text">
+        <label>Farbe</label>
+        <select name="color">
+          <option>Schwarz</option>
+          <option>Magenta</option>
+          <option>Cyan</option>
+          <option>Gelb</option>
+          <option>Universal</option>
+        </select>
+        </br></br>
+       <button type="submit" class="btn btn-success">Speichern</button>
+       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+    </form>
+  </script>
+
+  <script type="text/template" id="edit-toner-template">
+    <form class="edit-toner-form">
+      <legend>Toner Details</legend>
+        <label>Drucker</label>
+        <input name="printer" type="text" value=<%- toner.get('printer') %>>
+        <label>Modellname</label>
+        <input name="name" type="text" value=<%- toner.get('name') %>>
+        <label>Farbe</label>
+        <select name="color">
+          <option <%- toner.get('color')==1 ? 'selected' : '' %>>Schwarz</option>
+          <option <%- toner.get('color')==2 ? 'selected' : '' %>>Magenta</option>
+          <option <%- toner.get('color')==3 ? 'selected' : '' %>>Cyan</option>
+          <option <%- toner.get('color')==4 ? 'selected' : '' %>>Gelb</option>
+          <option <%- toner.get('color')==5 ? 'selected' : '' %>>Universal</option>
+        </select>
+        <label>Sichbarkeit</label>
+        <select name="hidden">
+          <option <%- toner.get('hidden')==1 ? 'selected' : '' %>>Sichtbar</option>
+          <option <%- toner.get('hidden')==2 ? 'selected' : '' %>>Versteckt</option>
+        </select>
+        </br></br>
+      <input type="hidden" name="id" value="<%- toner.get('id') %>" />
+       <button type="submit" class="btn btn-success">Speichern</button>
+       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+    </form>
+  </script>
+
+   <script type="text/template" id="edit-drum-template">
+    <form class="edit-drum-form">
+      <legend>Trommel Details</legend>
+        <label>Drucker</label>
+        <input name="printer" type="text" value=<%- drum.get('printer') %>>
+        <label>Modellname</label>
+        <input name="name" type="text" value=<%- drum.get('name') %>>
+        <label>Farbe</label>
+        <select name="color">
+          <option <%- drum.get('color')==1 ? 'selected' : '' %>>Schwarz</option>
+          <option <%- drum.get('color')==2 ? 'selected' : '' %>>Magenta</option>
+          <option <%- drum.get('color')==3 ? 'selected' : '' %>>Cyan</option>
+          <option <%- drum.get('color')==4 ? 'selected' : '' %>>Gelb</option>
+          <option <%- drum.get('color')==5 ? 'selected' : '' %>>Universal</option>
+        </select>
+        <label>Sichbarkeit</label>
+        <select name="hidden">
+          <option <%- drum.get('hidden')==1 ? 'selected' : '' %>>Sichtbar</option>
+          <option <%- drum.get('hidden')==2 ? 'selected' : '' %>>Versteckt</option>
+        </select>
+        </br></br>
+      <input type="hidden" name="id" value="<%- drum.get('id') %>" />
+       <button type="submit" class="btn btn-success">Speichern</button>
+       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+    </form>
+  </script>
+
   <script>
+
+    $.fn.serializeObject = function() {
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+    };
+
+    var Toner = Backbone.Model.extend({
+      urlRoot: '/api/tonerliste/toners'
+    });
+
+    var Drum = Backbone.Model.extend({
+      urlRoot: '/api/tonerliste/drums'
+    });
+
+    var TonerInstance = Backbone.Model.extend({
+      urlRoot: '/api/tonerliste/toner'
+    });
+
+    var DrumInstance = Backbone.Model.extend({
+      urlRoot: '/api/tonerliste/drum'
+    });
 
     var Toners = Backbone.Collection.extend({
       url: '/api/tonerliste/toners'
@@ -220,10 +345,162 @@
         var that = this;
         var toners = new Toners();
         var drums = new Drums();
-        $.when(toners.fetch(),drums.fetch()).done(function(toners, drums){
-            var template = _.template($('#items-template').html(), {toners: toners.models, drums: drums.models});
+        toners.fetch({
+          success: function() {
+            drums.fetch({
+              success: function(){
+                var template = _.template($('#items-template').html(), {toners: toners.models, drums: drums.models});
+                that.$el.html(template);
+              }
+            });
+          }
+        });   
+      }
+    });
+
+    var NewToner = Backbone.View.extend({
+      el: '.page',
+      events: {
+        'submit .new-toner-form': 'newToner',
+      },
+      newToner: function (ev) {
+        var tonerDetails = $(ev.currentTarget).serializeObject();
+        var toner = new Toner();
+        switch(tonerDetails.color){
+          case 'Schwarz': tonerDetails.color=1; break;
+          case 'Magenta': tonerDetails.color=2; break;
+          case 'Cyan': tonerDetails.color=3; break;
+          case 'Gelb': tonerDetails.color=4; break;
+          case 'Universal': tonerDetails.color=5; break;
+          default: break;
+        }
+        toner.save(tonerDetails, {
+          success: function (toner) {
+            router.navigate('', {trigger:true});
+            window.location.reload();
+          }
+        });
+        return false;
+        },
+        render: function () {    
+          var template = _.template($('#new-toner-template').html(), {});
+          this.$el.html(template);
+        }
+    });
+
+    var NewDrum = Backbone.View.extend({
+      el: '.page',
+      events: {
+        'submit .new-drum-form': 'newDrum',
+      },
+      newDrum: function (ev) {
+        var drumDetails = $(ev.currentTarget).serializeObject();
+        var drum = new Drum();
+        switch(drumDetails.color){
+          case 'Schwarz': drumDetails.color=1; break;
+          case 'Magenta': drumDetails.color=2; break;
+          case 'Cyan': drumDetails.color=3; break;
+          case 'Gelb': drumDetails.color=4; break;
+          case 'Universal': drumDetails.color=5; break;
+          default: break;
+        }
+        drum.save(drumDetails, {
+          success: function (toner) {
+            router.navigate('', {trigger:true});
+            window.location.reload();
+          }
+        });
+        return false;
+        },
+        render: function () {    
+          var template = _.template($('#new-drum-template').html(), {});
+          this.$el.html(template);
+        }
+    });
+
+    var EditToner = Backbone.View.extend({
+      el: '.page',
+      events: {
+        'submit .edit-toner-form': 'editToner',
+      },
+      editToner: function(ev) {
+        var tonerDetails = $(ev.currentTarget).serializeObject();
+        switch(tonerDetails.color){
+          case 'Schwarz': tonerDetails.color="1"; break;
+          case 'Magenta': tonerDetails.color="2"; break;
+          case 'Cyan': tonerDetails.color="3"; break;
+          case 'Gelb': tonerDetails.color="4"; break;
+          case 'Universal': tonerDetails.color="5"; break;
+          default: break;
+        }
+        switch(tonerDetails.hidden){
+          case 'Sichtbar': tonerDetails.hidden="0"; break;
+          case 'Versteckt': tonerDetails.hidden="1"; break;
+          default: break;
+        }
+        var toner = new TonerInstance(); 
+        toner.save(tonerDetails, {  
+          success: function (toner) {
+            router.navigate('', {trigger:true});
+            window.location.reload();
+          },
+          error: function(){
+          }
+        });
+        return false;
+      },
+      render: function (tonerid) {
+        var that = this;  
+        this.toner = new TonerInstance({id: tonerid.id});
+        this.toner.fetch({
+          success: function(toner){      
+            var template = _.template($('#edit-toner-template').html(), {toner: toner});
             that.$el.html(template);
-        });     
+          }
+        });
+      }
+    });
+
+    var EditDrum = Backbone.View.extend({
+      el: '.page',
+      events: {
+        'submit .edit-drum-form': 'editDrum',
+      },
+      editDrum: function(ev) {
+        var drumDetails = $(ev.currentTarget).serializeObject();
+        switch(drumDetails.color){
+          case 'Schwarz': drumDetails.color="1"; break;
+          case 'Magenta': drumDetails.color="2"; break;
+          case 'Cyan': drumDetails.color="3"; break;
+          case 'Gelb': drumDetails.color="4"; break;
+          case 'Universal': drumDetails.color="5"; break;
+          default: break;
+        }
+        switch(drumDetails.hidden){
+          case 'Sichtbar': drumDetails.hidden="0"; break;
+          case 'Versteckt': drumDetails.hidden="1"; break;
+          default: break;
+        }
+        var drum = new DrumInstance(); 
+        drum.save(drumDetails, {  
+          success: function (drum) {
+            router.navigate('', {trigger:true});
+            window.location.reload();
+          },
+          error: function(){
+          }
+        });
+        return false;
+      },
+      render: function (drumid) {      
+        var that = this;  
+        this.drum = new DrumInstance({id: drumid.id});
+        this.drum.fetch({
+          success: function(drum){      
+            var template = _.template($('#edit-drum-template').html(), {drum: drum});
+            that.$el.html(template);
+          }
+        });
       }
     });
 
@@ -232,12 +509,18 @@
     var Router = Backbone.Router.extend({
       routes: {
         '': 'home',
+        'new/:type': 'newitem',
+        'edit/:type/:id': 'edititem',
       }
     });
 
     var tonerList = new TonerList();
     var drumList = new DrumList();
     var itemList = new ItemList();
+    var newToner = new NewToner();
+    var newDrum = new NewDrum();
+    var editToner = new EditToner();
+    var editDrum = new EditDrum();
 
     var router = new Router;    
 
@@ -246,6 +529,23 @@
       drumList.render();
       itemList.render();
     });
+
+    router.on('route:newitem', function(type){
+      switch(type){
+        case 'toner' : newToner.render(); break;
+        case 'drum' : newDrum.render(); break;
+        default: console.log('Not defined new route!'); break;
+      }
+    });
+
+    router.on('route:edititem', function(type, id){
+      switch(type){
+        case 'toner' : editToner.render({id: id}); break;
+        case 'drum' : editDrum.render({id: id}); break;
+        default: console.log('Not defined new route!'); break;
+      }
+    });
+
 
     Backbone.history.start();
 
