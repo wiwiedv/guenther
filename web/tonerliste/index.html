@@ -33,6 +33,14 @@
   <script src="../lib/js/underscore-min.js" type="text/javascript"></script>
   <script src="../lib/js/backbone-min.js" type="text/javascript"></script>
 
+  <script type="text/template" id="error-template">
+    <div class="alert alert-error">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <h4>Fehler!</h4>      
+      <%- message %>
+    </div>
+  </script>
+
   <script type="text/template" id="toners-template">   
     <span class="label label-inverse">Toner</span>
     <div class="well-box">
@@ -409,9 +417,15 @@
       url: '/api/tonerliste/drums'
     });
 
+    var Error = Backbone.View.extend({  
+      el: '.error'
+    });
+
+    var error = new Error();
+
     var TonerList = Backbone.View.extend({
       el: '.toners',
-      render : function() {
+      render : function() {   
         var that = this;
         var toners = new Toners();
         toners.fetch({
@@ -419,7 +433,11 @@
             var template = _.template($('#toners-template').html(), {toners: toners.models});
             that.$el.html(template);
           },
-          error: function(){}
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: response.responseText});
+            error.$el.html(template);
+          }
         });
       }
     });
@@ -434,7 +452,11 @@
             var template = _.template($('#drums-template').html(), {drums: drums.models});
             that.$el.html(template);
           },
-          error: function(){}
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
       }
     });
@@ -451,7 +473,12 @@
               success: function(){
                 var template = _.template($('#items-template').html(), {toners: toners.models, drums: drums.models});
                 that.$el.html(template);
-              }
+              },
+              error: function(model, response){
+                var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+                var template = _.template($('#error-template').html(), {message: message});
+                error.$el.html(template);
+              }              
             });
           }
         });   
@@ -465,7 +492,7 @@
       },
       newToner: function (ev) {
         var tonerDetails = $(ev.currentTarget).serializeObject();
-        var toner = new Toner();
+        var toner = new Toner(); 
         switch(tonerDetails.color){
           case 'Schwarz': tonerDetails.color=1; break;
           case 'Magenta': tonerDetails.color=2; break;
@@ -478,7 +505,12 @@
           success: function (toner) {
             router.navigate('', {trigger:true});
             window.location.reload();
-          }
+          },
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          } 
         });
         return false;
         },
@@ -508,7 +540,12 @@
           success: function (toner) {
             router.navigate('', {trigger:true});
             window.location.reload();
-          }
+          },
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
         return false;
         },
@@ -544,8 +581,11 @@
             router.navigate('', {trigger:true});
             window.location.reload();
           },
-          error: function(){
-          }
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
         return false;
       },
@@ -559,7 +599,12 @@
               success: function(){  
                 var template = _.template($('#edit-toner-template').html(), {toner: toner, transaction: transaction.get('transactions')});
                 that.$el.html(template);
-              }
+              },
+              error: function(model, response){
+                var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+                var template = _.template($('#error-template').html(), {message: message});
+                error.$el.html(template);
+              }  
             });
           }
         });
@@ -592,8 +637,11 @@
             router.navigate('', {trigger:true});
             window.location.reload();
           },
-          error: function(){
-          }
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
         return false;
       },
@@ -607,9 +655,19 @@
               success: function(){
                 var template = _.template($('#edit-drum-template').html(), {drum: drum, transaction: transaction.get('transactions')});
                 that.$el.html(template);
-              }
+              },
+              error: function(model, response){
+                var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+                var template = _.template($('#error-template').html(), {message: message});
+                error.$el.html(template);
+              }  
             });
-          }
+          },
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
       }
     });
@@ -627,8 +685,11 @@
             router.navigate('', {trigger:true});
             window.location.reload();
           },
-          error: function(){
-          }
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
         return false;
       },
@@ -639,7 +700,12 @@
           success: function(){
             var template = _.template($('#stock-toner-template').html(), {toner: toner, action: args.action});
             that.$el.html(template);
-          }
+          },
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
       }
     });
@@ -657,8 +723,11 @@
             router.navigate('', {trigger:true});
             window.location.reload();
           },
-          error: function(){
-          }
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
         return false;
       },
@@ -669,7 +738,12 @@
           success: function(){
             var template = _.template($('#stock-drum-template').html(), {drum: drum, action: args.action});
             that.$el.html(template);
-          }
+          },
+          error: function(model, response){
+            var message = response.status + '(' + response.statusText + '): ' + response.responseText;
+            var template = _.template($('#error-template').html(), {message: message});
+            error.$el.html(template);
+          }  
         });
       }
     });
@@ -702,6 +776,7 @@
       drumList.render();
       itemList.render();
     });
+
 
     router.on('route:newitem', function(type){
       switch(type){
