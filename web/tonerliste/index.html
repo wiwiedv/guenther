@@ -16,15 +16,15 @@
 
 
   <div class="container"> 
-    <h1>Tonerliste</h1>
-     
+    <h1>Tonerliste<small> Alpha</small></h1>
+    <small>Anmeldefunktion noch nicht verfügbar</small>
     <div class="error"></div>
-    <div class="page">
+    <div class="page"></div>  
+    <div class="list">
       <div class="toners"></div>
       <div class="drums"></div>
       <div class="items"></div>
     </div>
-    
   </div>
 
 
@@ -34,9 +34,13 @@
   <script src="../lib/js/backbone-min.js" type="text/javascript"></script>
 
   <script type="text/template" id="error-template">
-    <div class="alert alert-error">
+    <div class="
+      <%- message!='' ? 'alert alert-error' : '' %>
+      ">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <h4>Fehler!</h4>      
+      <h4>
+      <%- message!='' ? 'Fehler!' : '' %>
+      </h4>      
       <%- message %>
     </div>
   </script>
@@ -180,6 +184,9 @@
   </script>
 
   <script type="text/template" id="new-toner-template">
+    <div class="toners"></div>
+    <div class="drums"></div>
+    <div class="items"></div>
     <form class="new-toner-form">
       <legend>Neuen Toner hinzufügen</legend>
         <label>Drucker</label>
@@ -196,7 +203,7 @@
         </select>
         </br></br>
        <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+       <a href="#" class="btn btn-small">Abbrechen</a>
     </form>
   </script>
 
@@ -217,7 +224,7 @@
         </select>
         </br></br>
        <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+       <a href="#" class="btn btn-small">Abbrechen</a>
     </form>
   </script>
 
@@ -245,7 +252,7 @@
             </br></br>
           <input type="hidden" name="id" value="<%- toner.get('id') %>" />
            <button type="submit" class="btn btn-success">Speichern</button>
-           <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+           <a href="#" class="btn btn-small">Abbrechen</a>
         </form>
         </div>
         <div class="span7">
@@ -303,7 +310,7 @@
         </br></br>
       <input type="hidden" name="id" value="<%- drum.get('id') %>" />
        <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+       <a href="#" class="btn btn-small">Abbrechen</a>
     </form>
     </div>
     <div class="span7">
@@ -346,7 +353,7 @@
         <input name="foo" type="hidden" value="<%- toner.get('id') %>" />
         </br></br>
        <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+       <a href="#" class="btn btn-small">Abbrechen</a>
     </form>
   </script>
 
@@ -359,7 +366,7 @@
         <input name="foo" type="hidden" value="<%- drum.get('id') %>" />
         </br></br>
        <button type="submit" class="btn btn-success">Speichern</button>
-       <a href="/tonerliste/" class="btn btn-small">Abbrechen</a>
+       <a href="#" class="btn btn-small">Abbrechen</a>
     </form>
   </script>
 
@@ -423,14 +430,15 @@
 
     var error = new Error();
 
-    var TonerList = Backbone.View.extend({
+    //Baustelle
+    var TonerList = Backbone.View.extend({     
       el: '.toners',
-      render : function() {   
-        var that = this;
+      render : function() {
+        var that = this;  
         var toners = new Toners();
         toners.fetch({
           success: function(toners){ 
-            var template = _.template($('#toners-template').html(), {toners: toners.models});
+            this.template = _.template($('#toners-template').html(), {toners: toners.models});
             that.$el.html(template);
           },
           error: function(model, response){
@@ -439,6 +447,9 @@
             error.$el.html(template);
           }
         });
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -458,6 +469,9 @@
             error.$el.html(template);
           }  
         });
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -482,6 +496,9 @@
             });
           }
         });   
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -503,8 +520,7 @@
         }
         toner.save(tonerDetails, {
           success: function (toner) {
-            router.navigate('', {trigger:true});
-            window.location.reload();
+            router.navigate('', {trigger: true});
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -514,9 +530,12 @@
         });
         return false;
         },
-        render: function () {    
+        render: function () {  
           var template = _.template($('#new-toner-template').html(), {});
           this.$el.html(template);
+        },
+        clear: function(){
+          this.$el.empty();
         }
     });
 
@@ -539,7 +558,6 @@
         drum.save(drumDetails, {
           success: function (toner) {
             router.navigate('', {trigger:true});
-            window.location.reload();
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -552,7 +570,11 @@
         render: function () {    
           var template = _.template($('#new-drum-template').html(), {});
           this.$el.html(template);
+        },
+        clear: function(){
+          this.$el.empty();
         }
+
     });
 
     var EditToner = Backbone.View.extend({
@@ -579,7 +601,6 @@
         toner.save(tonerDetails, {  
           success: function (toner) {
             router.navigate('', {trigger:true});
-            window.location.reload();
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -608,6 +629,9 @@
             });
           }
         });
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -635,7 +659,6 @@
         drum.save(drumDetails, {  
           success: function (drum) {
             router.navigate('', {trigger:true});
-            window.location.reload();
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -669,6 +692,9 @@
             error.$el.html(template);
           }  
         });
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -683,7 +709,6 @@
         toner.save(tonerDetails, { 
           success: function (toner) {
             router.navigate('', {trigger:true});
-            window.location.reload();
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -707,6 +732,9 @@
             error.$el.html(template);
           }  
         });
+      },
+      clear: function(){
+          this.$el.empty();
       }
     });
 
@@ -721,7 +749,6 @@
         drum.save(drumDetails, { 
           success: function (drum) {
             router.navigate('', {trigger:true});
-            window.location.reload();
           },
           error: function(model, response){
             var message = response.status + '(' + response.statusText + '): ' + response.responseText;
@@ -745,17 +772,9 @@
             error.$el.html(template);
           }  
         });
-      }
-    });
-
-
-
-    var Router = Backbone.Router.extend({
-      routes: {
-        '': 'home',
-        'new/:type': 'newitem',
-        'edit/:type/:id': 'edititem',
-        'stock/:type/:id/:action': 'changestock'
+      },
+      clear: function(){
+        this.$el.empty();
       }
     });
 
@@ -769,42 +788,64 @@
     var stockToner = new StockToner();
     var stockDrum = new StockDrum();
 
+    function clear() {
+      tonerList.clear();
+      drumList.clear();
+      itemList.clear();
+      newToner.clear();
+      newDrum.clear();
+      editToner.clear();
+      editDrum.clear();
+      stockToner.clear();
+      stockDrum.clear();
+    }
+
+    var Router = Backbone.Router.extend({
+      routes: {
+        "": "home",
+        "new/:type": "newitem",
+        "edit/:type/:id": "edititem",
+        "stock/:type/:id/:action": "changestock",
+      }
+    });
+
     var router = new Router;    
 
     router.on('route:home', function(){
+      clear();
       tonerList.render();
       drumList.render();
-      itemList.render();
-    });
+      itemList.render(); 
+    })
 
 
     router.on('route:newitem', function(type){
+      clear();
       switch(type){
         case 'toner' : newToner.render(); break;
         case 'drum' : newDrum.render(); break;
         default: console.log('Not defined new route!'); break;
       }
-    });
+    })
 
     router.on('route:edititem', function(type, id){
+      clear();
       switch(type){
         case 'toner' : editToner.render({id: id}); break;
         case 'drum' : editDrum.render({id: id}); break;
         default: console.log('Not defined new route!'); break;
       }
-    });
+    })
 
     router.on('route:changestock', function(type, id, action){
+      clear();
       switch(type){
         case 'toner' : stockToner.render({id: id, action: action}); break;
         case 'drum' : stockDrum.render({id: id, action: action});  break;
         default: console.log('Not defined new route!'); break;
       }
-    });
-
-
+    })
     Backbone.history.start();
-
   </script>
 
 
