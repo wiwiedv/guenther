@@ -11,13 +11,29 @@
   </style>
   <link href="css/style.css" rel="stylesheet">
   <link href="../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
+  <link href="../lib/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
-
-
   <div class="container"> 
-    <h1>Tonerliste<small> Alpha</small></h1>
-    <small>Anmeldefunktion noch nicht verfügbar</small>
+    <div class="row-fluid">
+      <div class="span5">
+        <h1>Tonerliste<small> Alpha</small></h1>
+      </div>
+      <div class="span6" style="padding-top: 20px; float: right">
+       <form class="form-inline" style="float: right;">
+        <div class="input-prepend input-append">
+          <input type="text" class="input-small" placeholder="Benutzername">     
+          <input type="password" class="input-small" placeholder="Passwort">
+          <span class="add-on">
+            <abbr title="Deine RZ-Kennung">?</abbr>
+          </span>   
+        </div>
+        <a href="#login" class="btn btn-primary">Login</a>
+      </form>
+     </div>
+    </div>
+  </div>
+  <div class="container"> 
     <div class="error"></div>
     <div class="page"></div>  
     <div class="list">

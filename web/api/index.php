@@ -25,6 +25,7 @@ $app->register(new \Silex\Provider\UrlGeneratorServiceProvider());
 
 // Mount ControllerProviders
 // also, collect configs according to implemented interfaces
+
 foreach ($controllerProviders as $provider) {
     // doctrine configs?
     if ($provider instanceof DoctrineConfigurationProviderInterface) {
@@ -45,7 +46,7 @@ foreach ($controllerProviders as $provider) {
                    );
     }
 }
-
+echo "<pre>" . var_dump($firewallOptions) . "</pre><br />";
 // Register ServiceProviders
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'dbs.options' => $dbsOptions
@@ -73,5 +74,6 @@ $app->get('/modules', function() use($app) {
 $app->get("/", function() use($app) {
     return $app->redirect($app['url_generator']->generate('linuxservices'));
 });
+
 
 $app->run();

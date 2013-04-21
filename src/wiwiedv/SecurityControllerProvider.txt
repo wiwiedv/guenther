@@ -1,0 +1,13 @@
+<?php
+
+require_once __DIR__.'/silex.phar'; 
+
+$app->register(new Silex\Extension\SessionExtension());
+ 
+$app->get('/login', function() use($app) { 
+  return "Hallo";
+}); 
+
+$app->run();
+
+?>
